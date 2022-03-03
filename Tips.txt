@@ -1,0 +1,5 @@
+Check if Comment
+Make functions that return false if:
+    1.Its a comment - Starts with #
+    2.Its a label line - It has a colon in it.
+    3.Its .data - Starts with a '.'
