@@ -298,7 +298,7 @@ def print_area(listt):
                 memory[rmem] = reg[rreg]
                 print ('reg[',rreg,']=', reg[rreg])
                 print ('memory[',rmem,']=', memory[rmem])
-        elif opp >= 8 or opp <= 11:
+        elif opp >= 8 and opp <= 11:
             for i in range(0,l-1):
                 # print(t[i])
                 if(t[i][0] == 't'):
