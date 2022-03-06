@@ -1,13 +1,4 @@
-# def isComment(s):
-#     return  s.split('#')
-#     return len(s) ==1
 
-# while 1:
-#     s = input("Enter: ")
-#     print(isComment(s))
-
-# It will take All instructions Line wise till we  get -1, and Store it a list
-# After that we will Implement each Code Line wise.
 from tkinter import *
 import tkinter.filedialog, tkinter.messagebox
 import os
@@ -603,79 +594,80 @@ def clrText():
 #load Bubble Sort file
 def loadBubbleSort():
     t.delete("1.0","end")
-    t.insert(INSERT,"##-------------------------------Bubble Sort -----------------------------------------#\n"+
-    "#In the given bubble sort program we are sorting 5 integers\n" +
-    "#which are loaded in registers x26 to x30.\n"+
-    "#The sorted integers are stored in the\n"+
-    "#registers x26 to x30 after running the file.\n\n"+
-
+    t.insert(INSERT,"##-------------------------------Bubble Sort ---------------------------------------#\n"+
+    "# In the given bubble sort program we are sorting 5 integers\n"+ 
+    "# It shows sorted integers from x18 to x22\n"+
+    "# and unsorted from x27 to x31\n"+
     ".text\n"+
-    "# x1 = 100\n"+
-    "ADDI x1, x0, 100\n"+
-    "ADDI x4, x0, 4\n"+
-    "SW   x4, 0(x1)      # A[0] = 4\n"+
-    "ADDI x4, x0, 5\n"+
-    "SW   x4, 1(x1)      # A[1] = 5\n"+
-    "ADDI x4, x0, 1\n"+
-    "SW   x4, 2(x1)      # A[2] = 1\n"+
-    "ADDI x4, x0, 2\n"+
-    "SW   x4, 3(x1)      # A[3] = 2\n"+
-    "ADDI x4, x0, 3\n"+
-    "SW   x4, 4(x1)      # A[4] = 3\n"+
+    "# x6 = 100\n"+
+    "ADDI x6, x0, 100\n"+
+    "ADDI x7, x0, 4\n"+
+    "SW   x7, 0(x6)      # A[0] = 4\n"+
+    "ADDI x7, x0, 5\n"+
+    "SW   x7, 1(x6)      # A[1] = 5\n"+
+    "ADDI x7, x0, 1\n"+
+    "SW   x7, 2(x6)      # A[2] = 1\n"+
+    "ADDI x7, x0, 2\n"+
+    "SW   x7, 3(x6)      # A[3] = 2\n"+
+    "ADDI x7, x0, 3\n"+
+    "SW   x7, 4(x6)      # A[4] = 3\n"+
     "# A = {5,4,3,2,1}\n"+
-    "printArray:\n"+
-    "ADDI x1, x0, 100\n"+
-    "LW   x26, 0(x1)      # x16 = A[0]\n" +
-    "LW   x27, 1(x1)      # x17 = A[1]\n" +
-    "LW   x28, 2(x1)      # x18 = A[2]\n" +
-    "LW   x29, 3(x1)      # x19 = A[3]\n" +
-    "LW   x30, 4(x1)      # x20 = A[4]\n\n" +
+    "printArray:     # Here we are actually loading the values in registers instead of printing\n"+
+    "ADDI x6, x0, 100\n"+
+    "LW   x27, 0(x6)      # x27 = A[0]\n" +
+    "LW   x28, 1(x6)      # x28 = A[1]\n" +
+    "LW   x29, 2(x6)      # x29 = A[2]\n" +
+    "LW   x30, 3(x6)      # x30 = A[3]\n" +
+    "LW   x31, 4(x6)      # x31 = A[4]\n\n" +
 
-    "ADDI x5, x0, 5      # size = 5\n\n"+
+    "ADDI x8, x0, 5      # size = 5\n\n"+
 
-    "# i-> x9, j-> x10, n->x5\n"+
+    "# i-> x9, j-> x19, n->x8\n"+
     "bubbleSort:\n"+
     "ADDI x9, x0, 0\n\n"+
 
     "oloop:\n"+
-    "BGE x9, x5, oexit\n"+
-    "ADDI x10, x5, 0\n"+
-    "SUBI x10, x10, 1\n"+
+    "BGE x9, x8, oexit\n"+
+    "ADDI x19, x8, 0\n"+
+    "SUBI x19, x19, 1\n"+
     "iloop:\n"+
-    "BGE x9, x10, iexit\n"+
-    "# x13 -> *A, x14->*A[j], *x15->A[i]\n"+
-    "#            x16-> A[j],  x17->A[i]\n"+
+    "BGE x9, x19, iexit\n"+
+    "# x23 -> *A, x24->*A[j], *x25->A[i]\n"+
+    "#            x21-> A[j],  x22->A[i]\n"+
     "swap:\n"+
-    "ADDI x13, x1, 0\n"+
-    "ADD x14, x13, x9\n"+
-    "ADD x15, x13, x10\n"+
-    "LW  x16, 0(x14)\n"+
-    "LW  x17, 0(x15)\n"+
-    "BGE x17, x16, skip\n\n"+
+    "ADDI x23, x6, 0\n"+
+    "ADD x24, x23, x9\n"+
+    "ADD x25, x23, x19\n"+
+    "LW  x21, 0(x24)\n"+
+    "LW  x22, 0(x25)\n"+
+    "BGE x22, x21, skip\n\n"+
 
     "# x18-> temp\n"+
-    "ADDI x18, x17, 0\n"+
-    "ADDI x17, x16, 0\n"+
-    "ADDI x16, x18, 0\n"+
-    "SW x16, 0(x14)\n"+
-    "SW x17, 0(x15)\n"+
+    "ADDI x18, x22, 0\n"+
+    "ADDI x22, x21, 0\n"+
+    "ADDI x21, x18, 0\n"+
+    "SW x21, 0(x24)\n"+
+    "SW x22, 0(x25)\n"+
     "skip:\n"+
-    "SUBI x10, x10, 1\n"+
+    "SUBI x19, x19, 1\n"+
     "JAL iloop\n"+
     "iexit:\n"+
     "ADDI x9, x9, 1\n"+
     "JAL oloop\n"+
     "oexit:\n\n"+
 
+    "ADDI x23, x0, 0\n"+
+    "ADDI x24, x0, 0\n"+
+    "ADDI x25, x0, 0\n\n"+
 
     "printSortedArray:\n"+
-
-    "ADDI x1, x0, 100\n"+
-    "LW   x16, 0(x1)      # x16 = A[0] \n"+
-    "LW   x17, 1(x1)      # x17 = A[1]\n" +
-    "LW   x18, 2(x1)      # x18 = A[2] \n"+
-    "LW   x19, 3(x1)      # x19 = A[3] \n"+
-    "LW   x20, 4(x1)      # x20 = A[4] \n"+
+    "# Here we are actually loading the values in registers instead of printing\n"+
+    "ADDI x6, x0, 100\n"+
+    "LW   x18, 0(x6)      # x18 = A[0]\n" +
+    "LW   x19, 1(x6)      # x19 = A[1]\n" +
+    "LW   x20, 2(x6)      # x20 = A[2]\n" +
+    "LW   x21, 3(x6)      # x21 = A[3]\n" +
+    "LW   x22, 4(x6)      # x22 = A[4]\n"+
     "# A = {1,2,3,4,5}\n"
     )
 
