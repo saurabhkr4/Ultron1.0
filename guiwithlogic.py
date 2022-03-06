@@ -532,7 +532,7 @@ for i in range(32):
     reg_value.append(Label(root, text="0",padx = 60, pady=4,bg="#282823",fg="white",bd=3, font=("Arial,4"), relief=RIDGE))
 
 for i in range(32):
-    reg_value[i].pack_propagate(0)
+    # reg_value[i].pack_propagate(0)
     if i>15:
         reg_value[i].grid(row=i-15,column=3)
     else:
@@ -600,6 +600,87 @@ def clrText():
     #set linenumber = 0
     t.delete("1.0","end")
 
+#load Bubble Sort file
+def loadBubbleSort():
+    t.delete("1.0","end")
+    t.insert(INSERT,"##-------------------------------Bubble Sort -----------------------------------------#\n"+
+    "#In the given bubble sort program we are sorting 5 integers\n" +
+    "#which are loaded in registers x26 to x30.\n"+
+    "#The sorted integers are stored in the\n"+
+    "#registers x26 to x30 after running the file.\n\n"+
+
+    ".text\n"+
+    "# x1 = 100\n"+
+    "ADDI x1, x0, 100\n"+
+    "ADDI x4, x0, 4\n"+
+    "SW   x4, 0(x1)      # A[0] = 4\n"+
+    "ADDI x4, x0, 5\n"+
+    "SW   x4, 1(x1)      # A[1] = 5\n"+
+    "ADDI x4, x0, 1\n"+
+    "SW   x4, 2(x1)      # A[2] = 1\n"+
+    "ADDI x4, x0, 2\n"+
+    "SW   x4, 3(x1)      # A[3] = 2\n"+
+    "ADDI x4, x0, 3\n"+
+    "SW   x4, 4(x1)      # A[4] = 3\n"+
+    "# A = {5,4,3,2,1}\n"+
+    "printArray:\n"+
+    "ADDI x1, x0, 100\n"+
+    "LW   x26, 0(x1)      # x16 = A[0]\n" +
+    "LW   x27, 1(x1)      # x17 = A[1]\n" +
+    "LW   x28, 2(x1)      # x18 = A[2]\n" +
+    "LW   x29, 3(x1)      # x19 = A[3]\n" +
+    "LW   x30, 4(x1)      # x20 = A[4]\n\n" +
+
+    "ADDI x5, x0, 5      # size = 5\n\n"+
+
+    "# i-> x9, j-> x10, n->x5\n"+
+    "bubbleSort:\n"+
+    "ADDI x9, x0, 0\n\n"+
+
+    "oloop:\n"+
+    "BGE x9, x5, oexit\n"+
+    "ADDI x10, x5, 0\n"+
+    "SUBI x10, x10, 1\n"+
+    "iloop:\n"+
+    "BGE x9, x10, iexit\n"+
+    "# x13 -> *A, x14->*A[j], *x15->A[i]\n"+
+    "#            x16-> A[j],  x17->A[i]\n"+
+    "swap:\n"+
+    "ADDI x13, x1, 0\n"+
+    "ADD x14, x13, x9\n"+
+    "ADD x15, x13, x10\n"+
+    "LW  x16, 0(x14)\n"+
+    "LW  x17, 0(x15)\n"+
+    "BGE x17, x16, skip\n\n"+
+
+    "# x18-> temp\n"+
+    "ADDI x18, x17, 0\n"+
+    "ADDI x17, x16, 0\n"+
+    "ADDI x16, x18, 0\n"+
+    "SW x16, 0(x14)\n"+
+    "SW x17, 0(x15)\n"+
+    "skip:\n"+
+    "SUBI x10, x10, 1\n"+
+    "JAL iloop\n"+
+    "iexit:\n"+
+    "ADDI x9, x9, 1\n"+
+    "JAL oloop\n"+
+    "oexit:\n\n"+
+
+
+    "printSortedArray:\n"+
+
+    "ADDI x1, x0, 100\n"+
+    "LW   x16, 0(x1)      # x16 = A[0] \n"+
+    "LW   x17, 1(x1)      # x17 = A[1]\n" +
+    "LW   x18, 2(x1)      # x18 = A[2] \n"+
+    "LW   x19, 3(x1)      # x19 = A[3] \n"+
+    "LW   x20, 4(x1)      # x20 = A[4] \n"+
+    "# A = {1,2,3,4,5}\n"
+    )
+
+
+
 
 #Run Button
 runButton = Button(textFrame,bg="#B5DD50", text="Run",padx=20,pady=4,command = lambda:print_area(t.get('1.0',END).splitlines()))
@@ -616,6 +697,11 @@ saveButton.place(x=104, y=0)
 #clr button for textbox
 clrButton = Button (textFrame,bg="#B5DD50",text="Clr",padx=20,pady=4, command = clrText)
 clrButton.place(x=199, y=0)
+
+#Bubble Sort File Button
+runButton = Button(textFrame,bg="#B5DD50", text="Bubble Sort",padx=20,pady=4,command = loadBubbleSort)
+runButton.place(x=335, y=0)
+
 
 # create a toplevel menu  
 # menubar = Menu(textFrame)  
