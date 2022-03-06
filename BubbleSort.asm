@@ -1,8 +1,8 @@
-##-------------------------------Bubble Sort -----------------------------------------#
-#In the given bubble sort program we are sorting 5 integers 
-#which are loaded in registers x26 to x30.
-#The sorted integers are stored in the
-#registers x26 to x30 after running the file.
+##-------------------------------Bubble Sort ---------------------------------------#
+# In the given bubble sort program we are sorting 5 integers 
+# which are loaded in registers x26 to x30.
+# The sorted integers are stored in the
+# registers from x26 to x30 after running the file.
 
 .text
 # x1 = 100

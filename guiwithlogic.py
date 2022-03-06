@@ -13,7 +13,7 @@ import tkinter.filedialog, tkinter.messagebox
 import os
 import tempfile
 from tkinter import filedialog
-from numpy import roots
+# from numpy import roots
 
 reg_name=[]
 reg_value=[]
