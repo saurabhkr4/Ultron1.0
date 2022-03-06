@@ -1,13 +1,4 @@
-# def isComment(s):
-#     return  s.split('#')
-#     return len(s) ==1
 
-# while 1:
-#     s = input("Enter: ")
-#     print(isComment(s))
-
-# It will take All instructions Line wise till we  get -1, and Store it a list
-# After that we will Implement each Code Line wise.
 from tkinter import *
 import tkinter.filedialog, tkinter.messagebox
 import os
@@ -604,10 +595,8 @@ def clrText():
 def loadBubbleSort():
     t.delete("1.0","end")
     t.insert(INSERT,"##-------------------------------Bubble Sort -----------------------------------------#\n"+
-    "#In the given bubble sort program we are sorting 5 integers\n" +
-    "#which are loaded in registers x26 to x30.\n"+
-    "#The sorted integers are stored in the\n"+
-    "#registers x26 to x30 after running the file.\n\n"+
+    "# The unsorted array is displayed on Registers from x26 to x30\n"+
+    "# The sorted array is displayed on Registers from x16 to x20\n\n"+
 
     ".text\n"+
     "# x1 = 100\n"+
