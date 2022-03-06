@@ -18,6 +18,8 @@ for i in range(5):
         continue
     l.append(s)
 print(l)
+
+print(str(12) + str(12))
 # from tkinter import *
 # root = Tk()
 

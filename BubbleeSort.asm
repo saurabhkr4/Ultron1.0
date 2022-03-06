@@ -14,6 +14,10 @@
     # A = {5,4,3,2,1}
     ADDI x5, x0, 5      # size = 5
     
-    printArray:
+    # i-> x9, j-> x10, n->x5
+    bubbleSort:
+    
 
+    printArray:
+    
     
