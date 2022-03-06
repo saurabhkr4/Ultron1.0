@@ -96,13 +96,15 @@ def printreg():
     pc_value.config(text= str(pc))
     for  i in range(32):
         reg_value[i].config(text=str(reg[i]))
+        # reg_value[i].config(expand=1)
+        # reg_value[i].config(padx =60)
 
-        if reg[i]>10:
-            reg_value[i].config(padx = 54)
-        elif reg[i]>100:
-            reg_value[i].config(padx = 38)
-        elif reg[i]>1000:
-            reg_value[i].config(padx = 33)
+        # if reg[i]>10:
+        #     reg_value[i].config(padx = 54)
+        # elif reg[i]>100:
+        #     reg_value[i].config(padx = 38)
+        # elif reg[i]>1000:
+        #     reg_value[i].config(padx = 33)
 
         
 
@@ -402,7 +404,7 @@ def print_area(listt):
 
 root = Tk()
 root.configure(background = "floral white")
-
+# root.pack_propagate(0)
 # reg_name=[]
 # reg_value=[]
 
@@ -519,6 +521,7 @@ for i in range (4):
     
 #placing the reg_name 
 for i in range(32):
+    # reg_name[i].pack_propagate(0)
     if i>15:
         reg_name[i].grid(row=i-15, column = 2)
     else:
@@ -529,6 +532,7 @@ for i in range(32):
     reg_value.append(Label(root, text="0",padx = 60, pady=4,bg="#282823",fg="white",bd=3, font=("Arial,4"), relief=RIDGE))
 
 for i in range(32):
+    reg_value[i].pack_propagate(0)
     if i>15:
         reg_value[i].grid(row=i-15,column=3)
     else:
