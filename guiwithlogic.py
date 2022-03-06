@@ -23,6 +23,7 @@ reg_value=[]
 iii = 0
 def printee(txt):
     global iii
+    iii = 0
     if(iii!=len(txt)):
         print(txt[iii])
         print("_________")
@@ -94,6 +95,16 @@ def printreg():
     reg[0] = 0
     for  i in range(32):
         reg_value[i].config(text=str(reg[i]))
+
+        if reg[i]>10:
+            reg_value[i].config(padx = 54)
+        elif reg[i]>100:
+            reg_value[i].config(padx = 38)
+        elif reg[i]>1000:
+            reg_value[i].config(padx = 33)
+
+
+
         if i<1:
             strj = ""
         elif i<10:
@@ -394,17 +405,21 @@ root.configure(background = "floral white")
 # reg_value=[]
 
 #PC
-pc = Label(root, text="PC", padx = 48, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE)
-pc.grid(row=0, column =0)
+pc_label = Label(root, text="PC", padx = 48, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE)
+pc_label.grid(row=0, column =0)
 pc_value =Label(root, text="0000",padx = 40, pady=4,bg="#282823",fg="white",bd=3, font=("Arial,11"), relief=RIDGE)
 pc_value.grid(row=0, column =1)
 
 #Clear Button
 def clearReg():
+    global pc
+    pc = 0
     for i in range (32):
         #make the values of elements in the backend register zero
         #register[i] = 0
-        reg_value[i].config(text="1000")
+        reg[i] = 0
+        reg_value[i].config(text="0")
+        reg_value[i].config(padx=60)
 
 clearButton = Button(root, text = "CLEAR",padx=96,pady=1,bg="#F8E907",bd=1, fg="black",font=("calibri",14), command=clearReg, relief=RAISED )
 clearButton.grid(row=0, column =2, columnspan =2)
@@ -487,7 +502,7 @@ for i in range(32):
 
 #Labels for values in the registers
 for i in range(32):
-    reg_value.append(Label(root, text="0000",padx = 40, pady=4,bg="#282823",fg="white",bd=3, font=("Arial,4"), relief=RIDGE))
+    reg_value.append(Label(root, text="0",padx = 60, pady=4,bg="#282823",fg="white",bd=3, font=("Arial,4"), relief=RIDGE))
 
 for i in range(32):
     if i>15:
