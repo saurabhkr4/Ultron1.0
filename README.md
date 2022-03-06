@@ -7,10 +7,26 @@ In the given bubble sort program we are sorting 5 integers which are stored in r
 The <b>unsorted array</b> is stored in the registers from <b>x26</b> to <b>x30</b>
 The <b>sorted array</b> is stored in the registers from <b>x16</b> to <b>x20</b>
 
-<b>Implemented Bubble Sort</b>
-![Screenshot (4942)](https://user-images.githubusercontent.com/97940574/156924700-1f2f63d8-b67c-4f2f-8e97-9435a321d070.png)
 
 
 
-<b>Initial look of program GUI</b>
-![Screenshot (4940)](https://user-images.githubusercontent.com/97940574/156884957-a78bc3d6-0079-433b-bd27-aaa661e1ef32.png)
+<b>How to use</b>
+**Step 1: Click on the Bubble Sort Button**
+
+<img width="941" alt="bubbleSort" src="https://user-images.githubusercontent.com/97940574/156926295-4af2f2b9-05ad-4d70-8596-5377ed55f0ea.png">
+
+
+**Step 2: Click on the Run Button**
+
+<img width="941" alt="Untitled1" src="https://user-images.githubusercontent.com/97940574/156926054-a71db01b-6b82-49e9-a781-48dda0b823ff.png">
+
+
+**Implemented Bubble Sort**
+
+<img width="941" alt="Untitled2" src="https://user-images.githubusercontent.com/97940574/156926333-bdda096a-1c81-4bdf-a1cc-ac9679070271.png">
+
+
+**Other Features:**
+
+<img width="941" alt="Untitled3" src="https://user-images.githubusercontent.com/97940574/156926307-51d6174a-1b60-4616-8483-4a9abf76f332.png">
+
