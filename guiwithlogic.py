@@ -93,6 +93,7 @@ reg = [0]*32
 def printreg():
     print(list(range(32)))
     reg[0] = 0
+    pc_value.config(text= str(pc))
     for  i in range(32):
         reg_value[i].config(text=str(reg[i]))
 
@@ -103,6 +104,7 @@ def printreg():
         elif reg[i]>1000:
             reg_value[i].config(padx = 33)
 
+        
 
 
         if i<1:
@@ -407,7 +409,7 @@ root.configure(background = "floral white")
 #PC
 pc_label = Label(root, text="PC", padx = 48, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE)
 pc_label.grid(row=0, column =0)
-pc_value =Label(root, text="0000",padx = 40, pady=4,bg="#282823",fg="white",bd=3, font=("Arial,11"), relief=RIDGE)
+pc_value =Label(root, text="0",padx = 60, pady=4,bg="#282823",fg="white",bd=3, font=("Arial,11"), relief=RIDGE)
 pc_value.grid(row=0, column =1)
 
 #Clear Button
@@ -442,19 +444,41 @@ def buttonColor():
         hexaButton.config(bg="skyblue", fg="black")
         decimalButton.config(bg="#8DB437", fg="black")
 
+#decimal to Binary
+def decimalToBinary(n):
+    return bin(n).replace("0b", "")
+
+#decimal to Hexadecimal
+def decimalToHexadecimal(n):
+    return hex(n).replace("0x", "")
+
+
+
+
 def binaryCommand():
     #write code and call function to make the register values binary
+
+    for i in range(32):
+        reg_value[i].config(text = str(decimalToBinary(reg[i])))
+
     global radixCount
     radixCount = 1
     buttonColor()
 
 def hexaCommand():
     #write code and call function to make the register values hexadecimal
+    for i in range(32):
+        reg_value[i].config(text= str(decimalToHexadecimal(reg[i])))
+    
     global radixCount
     radixCount = 2
     buttonColor()
 
 def decimalCommand():
+
+    for i in range(32):
+        reg_value[i].config(text= str(reg[i]))
+
     global radixCount
     radixCount = 3
     buttonColor()
