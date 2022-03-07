@@ -1,0 +1,1 @@
+print (i,"=i,rreg=",rreg)

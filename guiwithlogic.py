@@ -37,8 +37,8 @@ def filter(s):
             else:
                 rgind = rgind +25
         else:
-            print("Something's fishy")
-        print('x',rgind)
+            print("Variable Name Mistaken")
+        # print('x',rgind)
         return rgind
     elif(s[0] == 'x'):
         rgind = t_type(s)
@@ -46,8 +46,8 @@ def filter(s):
         if rgind.isdigit():
             rgind = int(rgind)
         else:
-            print("Something's fishy")
-        print('x',rgind)
+            print("Variable Name Mistaken")
+        # print('x',rgind)
         return rgind
     elif(s[0] == 'a'):
         rgind = t_type(s)
@@ -55,8 +55,8 @@ def filter(s):
         if rgind.isdigit():
             rgind = 10 + int(rgind)
         else:
-            print("Something's fishy")
-        print('x',rgind)
+            print("Variable Name Mistaken")
+        # print('x',rgind)
         return rgind
     elif(s[0] == 's'):
         rgind = t_type(s)            
@@ -67,13 +67,13 @@ def filter(s):
             else:
                 rgind = rgind + 16
         else:
-            print("Something's fishy")
-        print('x',rgind)
+            print("Variable Name Mistaken")
+        # print('x',rgind)
         return rgind        
     elif s.isdecimal():
         rgind = s   
         rgind = int(rgind)
-        print('const',rgind)
+        # print('const',rgind)
         return rgind
 def isLabel(s):
     return s.find(':')!=-1
@@ -81,7 +81,7 @@ N__ = 1024
 memory = [0]*N__
 reg = [0]*32
 
-def printreg():
+def printreg(pc):
     print(list(range(32)))
     reg[0] = 0
     pc_value.config(text= str(pc))
@@ -175,24 +175,24 @@ def print_area(listt):
                         else:
                             rgind = rgind +25
                     else:
-                        print("Something's fishy")
-                    print('x',rgind)
+                        print("Variable Name Mistaken")
+                    # print('x',rgind)
                 elif(t[i][0] == 'x'):
                     rgind = t_type(t[i])
                     
                     if rgind.isdigit():
                         rgind = int(rgind)
                     else:
-                        print("Something's fishy")
-                    print('x',rgind)
+                        print("Variable Name Mistaken")
+                    # print('x',rgind)
                 elif(t[i][0] == 'a'):
                     rgind = t_type(t[i])
                     
                     if rgind.isdigit():
                         rgind = 10 + int(rgind)
                     else:
-                        print("Something's fishy")
-                    print('x',rgind)
+                        print("Variable Name Mistaken")
+                    # print('x',rgind)
                 elif(t[i][0] == '#'):
                     break
                 elif(t[i][0] == 's'):
@@ -204,13 +204,13 @@ def print_area(listt):
                         else:
                             rgind = rgind + 16
                     else:
-                        print("Something's fishy")
-                    print('x',rgind)
+                        print("Variable Name Mistaken")
+                    # print('x',rgind)
                     
                 elif t[i].isdecimal():
                     rgind = t[i]   
                     rgind = int(rgind)
-                    print('const',rgind)
+                    # print('const',rgind)
 
                 if(i==0):
                     rd = rgind
@@ -245,24 +245,24 @@ def print_area(listt):
                         else:
                             rgind = rgind +25
                     else:
-                        print("Something's fishy")
-                    print('x',rgind)
+                        print("Variable Name Mistaken")
+                    # print('x',rgind)
                 elif(t[i][0] == 'x'):
                     rgind = t_type(t[i])
                     
                     if rgind.isdigit():
                         rgind = int(rgind)
                     else:
-                        print("Something's fishy")
-                    print('x',rgind)
+                        print("Variable Name Mistaken")
+                    # print('x',rgind)
                 elif(t[i][0] == 'a'):
                     rgind = t_type(t[i])
                     
                     if rgind.isdigit():
                         rgind = 10 + int(rgind)
                     else:
-                        print("Something's fishy")
-                    print('x',rgind)
+                        print("Variable Name Mistaken")
+                    # print('x',rgind)
                 elif(t[i][0] == '#'):
                     break
                 elif(t[i][0] == 's'):
@@ -275,12 +275,12 @@ def print_area(listt):
                             rgind = rgind + 16
                     else:
                         print(t[i])
-                    print('x',rgind)
+                    # print('x',rgind)
                     
                 elif t[i].isdecimal():
                     rgind = t[i]   
                     rgind = int(rgind)
-                    print('const',rgind)
+                    # print('const',rgind)
                 elif t[i].find('(') != -1:
                     ti = t[i].replace('(', " ").replace(')'," ")
                     ti = ti.split();
@@ -324,24 +324,24 @@ def print_area(listt):
                         else:
                             rgind = rgind +25
                     else:
-                        print("Something's fishy")
-                    print('x',rgind)
+                        print("Variable Name Mistaken")
+                    # print('x',rgind)
                 elif(t[i][0] == 'x'):
                     rgind = t_type(t[i])
                     
                     if rgind.isdigit():
                         rgind = int(rgind)
                     else:
-                        print("Something's fishy")
-                    print('x',rgind)
+                        print("Variable Name Mistaken")
+                    # print('x',rgind)
                 elif(t[i][0] == 'a'):
                     rgind = t_type(t[i])
                     
                     if rgind.isdigit():
                         rgind = 10 + int(rgind)
                     else:
-                        print("Something's fishy")
-                    print('x',rgind)
+                        print("Variable Name Mistaken")
+                    # print('x',rgind)
                 elif(t[i][0] == '#'): 
                     break
                 elif(t[i][0] == 's'):
@@ -354,12 +354,12 @@ def print_area(listt):
                             rgind = rgind + 16
                     else:
                         print(t[i])
-                    print('x',rgind)
+                    # print('x',rgind)
                     
                 elif t[i].isdecimal():
                     rgind = t[i]   
                     rgind = int(rgind)
-                    print('const',rgind)
+                    # print('const',rgind)
 
                 if(i==0):
                     rc1 = rgind
@@ -384,7 +384,7 @@ def print_area(listt):
             print("t[0]:",t[0])
             pc = target[t[0]]               # PC
             
-        printreg()
+        printreg(pc)
         printee(listt)
 
 
