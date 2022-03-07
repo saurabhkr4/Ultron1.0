@@ -16,8 +16,8 @@ def printee(txt):
     global iii
     iii = 0
     if(iii!=len(txt)):
-        print(txt[iii])
-        print("_________")
+        # print(txt[iii])
+        # print("_________")
         iii+=1
 
 
@@ -82,7 +82,7 @@ memory = [0]*N__
 reg = [0]*32
 
 def printreg(pc):
-    print(list(range(32)))
+    # print(list(range(32)))
     reg[0] = 0
     pc_value.config(text= str(pc))
     for  i in range(32):
@@ -97,16 +97,18 @@ def printreg(pc):
         # elif reg[i]>1000:
         #     reg_value[i].config(padx = 33)
 
-        
+        if reg[i]!=0:
+            print('x', end ='')
+            print(i,'=',reg[i], end = " | ")
 
 
-        if i<1:
-            strj = ""
-        elif i<10:
-            strj= ","
-        else:
-            strj = ", "
-        print(strj,reg[i], end = "")
+        # if i<1:
+        #     strj = ""
+        # elif i<10:
+        #     strj= ","
+        # else:
+        #     strj = ", "
+        # print(strj,reg[i], end = "")
     print("\n","pc =",pc)   # PC
 
 
@@ -154,7 +156,7 @@ def print_area(listt):
         print (p)
         llist = p.split();
 
-        print (llist)
+        # print (llist)
         l = len(llist);
         t = []
         for i in range(1,l):
