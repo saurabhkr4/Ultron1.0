@@ -30,7 +30,7 @@ The <b>sorted array</b> is stored in the registers from <b>x18</b> to <b>x22</b>
 <img width="936" alt="Untitled3" src="https://user-images.githubusercontent.com/97940574/156937552-8783c1b1-538a-4716-a15a-6b42911785f5.png">
 
 
-
+Along with BubbleSort.asm, also try running sumofTenNaturalNumbers.asm and LoadStorecheck.asm
 
 **Other Features:**
 
