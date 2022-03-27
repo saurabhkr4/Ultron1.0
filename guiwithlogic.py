@@ -9,6 +9,12 @@ from tkinter import filedialog
 reg_name=[]
 reg_value=[]
 
+print("DO YOU WANT TO EXECUTE EXPRESSION STEP WISE?\nIf yes, Print 1, else print 0")
+stepwise = int(input())
+if stepwise ==1:
+    stepwise= True
+else:
+    stepwise = False
 
 
 iii = 0
@@ -124,6 +130,7 @@ target = dict()
 targetinv = dict()
 big = []
 pc = 0
+
 def print_area(listt):
     pc = 0
     for z in range(len(listt)):
@@ -141,9 +148,12 @@ def print_area(listt):
     print(target)
     pc = 0
 
-
-    while pc<len(big):                          # PC
-        
+    while pc<len(big): 
+        global stepwise                         # PC
+        if(stepwise):
+            algebra = input()
+            if algebra == 'ultron':
+                stepwise = False
         s = big[pc]     # PC
         pc = pc+1       # PC
         if s =='-1':
@@ -167,53 +177,8 @@ def print_area(listt):
         #     #      target[p2lp] = pc
         elif opp<6:
             for i in range(0,l-1):
-                # print(t[i])
-                if(t[i][0] == 't'):
-                    rgind = t_type(t[i])                
-                    if rgind.isdigit():
-                        rgind = int(rgind)
-                        if(rgind < 3):
-                            rgind = rgind + 5
-                        else:
-                            rgind = rgind +25
-                    else:
-                        print("Variable Name Mistaken")
-                    # print('x',rgind)
-                elif(t[i][0] == 'x'):
-                    rgind = t_type(t[i])
-                    
-                    if rgind.isdigit():
-                        rgind = int(rgind)
-                    else:
-                        print("Variable Name Mistaken")
-                    # print('x',rgind)
-                elif(t[i][0] == 'a'):
-                    rgind = t_type(t[i])
-                    
-                    if rgind.isdigit():
-                        rgind = 10 + int(rgind)
-                    else:
-                        print("Variable Name Mistaken")
-                    # print('x',rgind)
-                elif(t[i][0] == '#'):
-                    break
-                elif(t[i][0] == 's'):
-                    rgind = t_type(t[i])            
-                    if rgind.isdigit():
-                        rgind = int(rgind)
-                        if rgind<2:
-                            rgind = rgind + 8
-                        else:
-                            rgind = rgind + 16
-                    else:
-                        print("Variable Name Mistaken")
-                    # print('x',rgind)
-                    
-                elif t[i].isdecimal():
-                    rgind = t[i]   
-                    rgind = int(rgind)
-                    # print('const',rgind)
 
+                rgind = filter(t[i])
                 if(i==0):
                     rd = rgind
                 elif(i==1):
@@ -238,52 +203,9 @@ def print_area(listt):
                 reg[rd] = reg[rs1] * rs2
         elif opp == 6 or opp ==7 : 
             for i in range(0,l-1):            
-                if(t[i][0] == 't'):
-                    rgind = t_type(t[i])                
-                    if rgind.isdigit():
-                        rgind = int(rgind)
-                        if(rgind < 3):
-                            rgind = rgind + 5
-                        else:
-                            rgind = rgind +25
-                    else:
-                        print("Variable Name Mistaken")
-                    # print('x',rgind)
-                elif(t[i][0] == 'x'):
-                    rgind = t_type(t[i])
-                    
-                    if rgind.isdigit():
-                        rgind = int(rgind)
-                    else:
-                        print("Variable Name Mistaken")
-                    # print('x',rgind)
-                elif(t[i][0] == 'a'):
-                    rgind = t_type(t[i])
-                    
-                    if rgind.isdigit():
-                        rgind = 10 + int(rgind)
-                    else:
-                        print("Variable Name Mistaken")
-                    # print('x',rgind)
-                elif(t[i][0] == '#'):
-                    break
-                elif(t[i][0] == 's'):
-                    rgind = t_type(t[i])            
-                    if rgind.isdigit():
-                        rgind = int(rgind)
-                        if rgind<2:
-                            rgind = rgind + 8
-                        else:
-                            rgind = rgind + 16
-                    else:
-                        print(t[i])
-                    # print('x',rgind)
-                    
-                elif t[i].isdecimal():
-                    rgind = t[i]   
-                    rgind = int(rgind)
-                    # print('const',rgind)
-                elif t[i].find('(') != -1:
+
+                rgind = filter(t[i])
+                if t[i].find('(') != -1:
                     ti = t[i].replace('(', " ").replace(')'," ")
                     ti = ti.split();
                     oadd = int(ti[0])
@@ -316,53 +238,8 @@ def print_area(listt):
                 print ('memory[',rmem,']=', memory[rmem])
         elif opp >= 8 and opp <= 11:
             for i in range(0,l-1):
-                # print(t[i])
-                if(t[i][0] == 't'):
-                    rgind = t_type(t[i])                
-                    if rgind.isdigit():
-                        rgind = int(rgind)
-                        if(rgind < 3):
-                            rgind = rgind + 5
-                        else:
-                            rgind = rgind +25
-                    else:
-                        print("Variable Name Mistaken")
-                    # print('x',rgind)
-                elif(t[i][0] == 'x'):
-                    rgind = t_type(t[i])
-                    
-                    if rgind.isdigit():
-                        rgind = int(rgind)
-                    else:
-                        print("Variable Name Mistaken")
-                    # print('x',rgind)
-                elif(t[i][0] == 'a'):
-                    rgind = t_type(t[i])
-                    
-                    if rgind.isdigit():
-                        rgind = 10 + int(rgind)
-                    else:
-                        print("Variable Name Mistaken")
-                    # print('x',rgind)
-                elif(t[i][0] == '#'): 
-                    break
-                elif(t[i][0] == 's'):
-                    rgind = t_type(t[i])            
-                    if rgind.isdigit():
-                        rgind = int(rgind)
-                        if rgind<2:
-                            rgind = rgind + 8
-                        else:
-                            rgind = rgind + 16
-                    else:
-                        print(t[i])
-                    # print('x',rgind)
-                    
-                elif t[i].isdecimal():
-                    rgind = t[i]   
-                    rgind = int(rgind)
-                    # print('const',rgind)
 
+                rgind = filter(t[i])
                 if(i==0):
                     rc1 = rgind
                 elif(i==1):
@@ -596,81 +473,82 @@ def clrText():
 #load Bubble Sort file
 def loadBubbleSort():
     t.delete("1.0","end")
-    t.insert(INSERT,"##-------------------------------Bubble Sort ---------------------------------------#\n"+
-    "# In the given bubble sort program we are sorting 5 integers\n"+ 
-    "# It shows sorted integers from x18 to x22\n"+
-    "# and unsorted from x27 to x31\n"+
-    ".text\n"+
-    "# x6 = 100\n"+
-    "ADDI x6, x0, 100\n"+
-    "ADDI x7, x0, 4\n"+
-    "SW   x7, 0(x6)      # A[0] = 4\n"+
-    "ADDI x7, x0, 5\n"+
-    "SW   x7, 1(x6)      # A[1] = 5\n"+
-    "ADDI x7, x0, 1\n"+
-    "SW   x7, 2(x6)      # A[2] = 1\n"+
-    "ADDI x7, x0, 2\n"+
-    "SW   x7, 3(x6)      # A[3] = 2\n"+
-    "ADDI x7, x0, 3\n"+
-    "SW   x7, 4(x6)      # A[4] = 3\n"+
-    "# A = {5,4,3,2,1}\n"+
-    "printArray:     # Here we are actually loading the values in registers instead of printing\n"+
-    "ADDI x6, x0, 100\n"+
-    "LW   x27, 0(x6)      # x27 = A[0]\n" +
-    "LW   x28, 1(x6)      # x28 = A[1]\n" +
-    "LW   x29, 2(x6)      # x29 = A[2]\n" +
-    "LW   x30, 3(x6)      # x30 = A[3]\n" +
-    "LW   x31, 4(x6)      # x31 = A[4]\n\n" +
+    t.insert(INSERT,
+    '''##-------------------------------Bubble Sort ---------------------------------------#
+# In the given bubble sort program we are sorting 5 integers 
+# It shows sorted integers from x18 to x22
+# and unsorted from x27 to x31
+.text
+# x6 = 100
+ADDI x6, x0, 100
+ADDI x7, x0, 4
+SW   x7, 0(x6)      # A[0] = 4
+ADDI x7, x0, 5
+SW   x7, 1(x6)      # A[1] = 5
+ADDI x7, x0, 1
+SW   x7, 2(x6)      # A[2] = 1
+ADDI x7, x0, 2
+SW   x7, 3(x6)      # A[3] = 2
+ADDI x7, x0, 3
+SW   x7, 4(x6)      # A[4] = 3
+# A = {5,4,3,2,1}
+printArray:     # Here we are actually loading the values in registers instead of printing
+ADDI x6, x0, 100
+LW   x27, 0(x6)      # x27 = A[0] 
+LW   x28, 1(x6)      # x28 = A[1] 
+LW   x29, 2(x6)      # x29 = A[2] 
+LW   x30, 3(x6)      # x30 = A[3] 
+LW   x31, 4(x6)      # x31 = A[4] 
 
-    "ADDI x8, x0, 5      # size = 5\n\n"+
+ADDI x8, x0, 5      # size = 5
 
-    "# i-> x9, j-> x19, n->x8\n"+
-    "bubbleSort:\n"+
-    "ADDI x9, x0, 0\n\n"+
+# i-> x9, j-> x19, n->x8
+bubbleSort:
+ADDI x9, x0, 0
 
-    "oloop:\n"+
-    "BGE x9, x8, oexit\n"+
-    "ADDI x19, x8, 0\n"+
-    "SUBI x19, x19, 1\n"+
-    "iloop:\n"+
-    "BGE x9, x19, iexit\n"+
-    "# x23 -> *A, x24->*A[j], *x25->A[i]\n"+
-    "#            x21-> A[j],  x22->A[i]\n"+
-    "swap:\n"+
-    "ADDI x23, x6, 0\n"+
-    "ADD x24, x23, x9\n"+
-    "ADD x25, x23, x19\n"+
-    "LW  x21, 0(x24)\n"+
-    "LW  x22, 0(x25)\n"+
-    "BGE x22, x21, skip\n\n"+
+oloop:
+BGE x9, x8, oexit
+ADDI x19, x8, 0
+SUBI x19, x19, 1
+iloop:
+BGE x9, x19, iexit
+# x23 -> *A, x24->*A[j], *x25->A[i]
+#            x21-> A[j],  x22->A[i]
+swap:
+ADDI x23, x6, 0
+ADD x24, x23, x9
+ADD x25, x23, x19
+LW  x21, 0(x24)
+LW  x22, 0(x25)
+BGE x22, x21, skip
 
-    "# x18-> temp\n"+
-    "ADDI x18, x22, 0\n"+
-    "ADDI x22, x21, 0\n"+
-    "ADDI x21, x18, 0\n"+
-    "SW x21, 0(x24)\n"+
-    "SW x22, 0(x25)\n"+
-    "skip:\n"+
-    "SUBI x19, x19, 1\n"+
-    "JAL iloop\n"+
-    "iexit:\n"+
-    "ADDI x9, x9, 1\n"+
-    "JAL oloop\n"+
-    "oexit:\n\n"+
+# x18-> temp
+ADDI x18, x22, 0
+ADDI x22, x21, 0
+ADDI x21, x18, 0
+SW x21, 0(x24)
+SW x22, 0(x25)
+skip:
+SUBI x19, x19, 1
+JAL iloop
+iexit:
+ADDI x9, x9, 1
+JAL oloop
+oexit:
 
-    "ADDI x23, x0, 0\n"+
-    "ADDI x24, x0, 0\n"+
-    "ADDI x25, x0, 0\n\n"+
+ADDI x23, x0, 0
+ADDI x24, x0, 0
+ADDI x25, x0, 0
 
-    "printSortedArray:\n"+
-    "# Here we are actually loading the values in registers instead of printing\n"+
-    "ADDI x6, x0, 100\n"+
-    "LW   x18, 0(x6)      # x18 = A[0]\n" +
-    "LW   x19, 1(x6)      # x19 = A[1]\n" +
-    "LW   x20, 2(x6)      # x20 = A[2]\n" +
-    "LW   x21, 3(x6)      # x21 = A[3]\n" +
-    "LW   x22, 4(x6)      # x22 = A[4]\n"+
-    "# A = {1,2,3,4,5}\n"
+printSortedArray:
+# Here we are actually loading the values in registers instead of printing
+ADDI x6, x0, 100
+LW   x18, 0(x6)      # x18 = A[0] 
+LW   x19, 1(x6)      # x19 = A[1] 
+LW   x20, 2(x6)      # x20 = A[2] 
+LW   x21, 3(x6)      # x21 = A[3] 
+LW   x22, 4(x6)      # x22 = A[4] 
+# A = {1,2,3,4,5}'''
     )
 
 

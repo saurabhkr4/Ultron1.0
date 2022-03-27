@@ -7,7 +7,55 @@
 def t_type(s):
     # print("Operation Peformed")
     return s[1:]
-
+def filter(s):
+    s = s.removeprefix('$')
+    if(s[0] == 't'):
+        rgind = t_type(s)                
+        if rgind.isdigit():
+            rgind = int(rgind)
+            if(rgind < 3):
+                rgind = rgind + 5
+            else:
+                rgind = rgind +25
+        else:
+            print("Variable Name Mistaken")
+        # print('x',rgind)
+        return rgind
+    elif(s[0] == 'x'):
+        rgind = t_type(s)
+        
+        if rgind.isdigit():
+            rgind = int(rgind)
+        else:
+            print("Variable Name Mistaken")
+        # print('x',rgind)
+        return rgind
+    elif(s[0] == 'a'):
+        rgind = t_type(s)
+        
+        if rgind.isdigit():
+            rgind = 10 + int(rgind)
+        else:
+            print("Variable Name Mistaken")
+        # print('x',rgind)
+        return rgind
+    elif(s[0] == 's'):
+        rgind = t_type(s)            
+        if rgind.isdigit():
+            rgind = int(rgind)
+            if rgind<2:
+                rgind = rgind + 8
+            else:
+                rgind = rgind + 16
+        else:
+            print("Variable Name Mistaken")
+        # print('x',rgind)
+        return rgind        
+    elif s.isdecimal():
+        rgind = s   
+        rgind = int(rgind)
+        # print('const',rgind)
+        return rgind
 def isLabel(s):
     return s.find(':')!=-1
 
@@ -71,7 +119,7 @@ while pc<len(big):
         continue
     # else:
     #     pc = pc + 1
-    p = (s.replace(',', ''))
+    p = (s.replace(',', ' '))
     print (p)
     llist = p.split();
 
@@ -89,44 +137,45 @@ while pc<len(big):
     elif opp<6:
         for i in range(0,l-1):
             # print(t[i])
-            if(t[i][0] == 't'):
-                rgind = t_type(t[i])                
-                if rgind.isdigit():
-                    rgind = int(rgind)
-                    if(rgind < 3):
-                        rgind = rgind + 5
-                    else:
-                        rgind = rgind +25
-                else:
-                    print("Something's fishy")
-                print('x',rgind)
-            elif(t[i][0] == 'a'):
-                rgind = t_type(t[i])
+            
+            # if(t[i][0] == 't'):
+            #     rgind = t_type(t[i])                
+            #     if rgind.isdigit():
+            #         rgind = int(rgind)
+            #         if(rgind < 3):
+            #             rgind = rgind + 5
+            #         else:
+            #             rgind = rgind +25
+            #     else:
+            #         print("Something's fishy")
+            #     print('x',rgind)
+            # elif(t[i][0] == 'a'):
+            #     rgind = t_type(t[i])
                 
-                if rgind.isdigit():
-                    rgind = 10 + int(rgind)
-                else:
-                    print("Something's fishy")
-                print('x',rgind)
-            elif(t[i][0] == '#'):
-                break
-            elif(t[i][0] == 's'):
-                rgind = t_type(t[i])            
-                if rgind.isdigit():
-                    rgind = int(rgind)
-                    if rgind<2:
-                        rgind = rgind + 8
-                    else:
-                        rgind = rgind + 16
-                else:
-                    print("Something's fishy")
-                print('x',rgind)
+            #     if rgind.isdigit():
+            #         rgind = 10 + int(rgind)
+            #     else:
+            #         print("Something's fishy")
+            #     print('x',rgind)
+            # elif(t[i][0] == '#'):
+            #     break
+            # elif(t[i][0] == 's'):
+            #     rgind = t_type(t[i])            
+            #     if rgind.isdigit():
+            #         rgind = int(rgind)
+            #         if rgind<2:
+            #             rgind = rgind + 8
+            #         else:
+            #             rgind = rgind + 16
+            #     else:
+            #         print("Something's fishy")
+            #     print('x',rgind)
                 
-            elif t[i].isdecimal():
-                rgind = t[i]   
-                rgind = int(rgind)
-                print('const',rgind)
-
+            # elif t[i].isdecimal():
+            #     rgind = t[i]   
+            #     rgind = int(rgind)
+            #     print('const',rgind)
+            rgind = filter(t[i])
             if(i==0):
                 rd = rgind
             elif(i==1):
@@ -152,44 +201,44 @@ while pc<len(big):
     elif opp == 8 or opp == 9:
         for i in range(0,l-1):
             # print(t[i])
-            if(t[i][0] == 't'):
-                rgind = t_type(t[i])                
-                if rgind.isdigit():
-                    rgind = int(rgind)
-                    if(rgind < 3):
-                        rgind = rgind + 5
-                    else:
-                        rgind = rgind +25
-                else:
-                    print("Something's fishy")
-                print('x',rgind)
-            elif(t[i][0] == 'a'):
-                rgind = t_type(t[i])
+            # if(t[i][0] == 't'):
+            #     rgind = t_type(t[i])                
+            #     if rgind.isdigit():
+            #         rgind = int(rgind)
+            #         if(rgind < 3):
+            #             rgind = rgind + 5
+            #         else:
+            #             rgind = rgind +25
+            #     else:
+            #         print("Something's fishy")
+            #     print('x',rgind)
+            # elif(t[i][0] == 'a'):
+            #     rgind = t_type(t[i])
                 
-                if rgind.isdigit():
-                    rgind = 10 + int(rgind)
-                else:
-                    print("Something's fishy")
-                print('x',rgind)
-            elif(t[i][0] == '#'):
-                break
-            elif(t[i][0] == 's'):
-                rgind = t_type(t[i])            
-                if rgind.isdigit():
-                    rgind = int(rgind)
-                    if rgind<2:
-                        rgind = rgind + 8
-                    else:
-                        rgind = rgind + 16
-                else:
-                    print(t[i])
-                print('x',rgind)
+            #     if rgind.isdigit():
+            #         rgind = 10 + int(rgind)
+            #     else:
+            #         print("Something's fishy")
+            #     print('x',rgind)
+            # elif(t[i][0] == '#'):
+            #     break
+            # elif(t[i][0] == 's'):
+            #     rgind = t_type(t[i])            
+            #     if rgind.isdigit():
+            #         rgind = int(rgind)
+            #         if rgind<2:
+            #             rgind = rgind + 8
+            #         else:
+            #             rgind = rgind + 16
+            #     else:
+            #         print(t[i])
+            #     print('x',rgind)
                 
-            elif t[i].isdecimal():
-                rgind = t[i]   
-                rgind = int(rgind)
-                print('const',rgind)
-
+            # elif t[i].isdecimal():
+            #     rgind = t[i]   
+            #     rgind = int(rgind)
+            #     print('const',rgind)
+            rgind = filter(t[i])
             if(i==0):
                 rc1 = rgind
             elif(i==1):
