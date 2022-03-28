@@ -10,11 +10,11 @@ reg_name=[]
 reg_value=[]
 
 print("DO YOU WANT TO EXECUTE EXPRESSION STEP WISE?\nIf yes, Print 1, else print 0")
-stepwise = int(input())
-if stepwise ==1:
-    stepwise= True
-else:
-    stepwise = False
+# stepwise = int(input())
+# if stepwise ==1:
+#     stepwise= True
+# else:
+#     stepwise = False
 
 
 iii = 0
@@ -149,11 +149,11 @@ def print_area(listt):
     pc = 0
 
     while pc<len(big): 
-        global stepwise                         # PC
-        if(stepwise):
-            algebra = input()
-            if algebra == 'ultron':
-                stepwise = False
+        # global stepwise                         # PC
+        # if(stepwise):
+        #     algebra = input()
+        #     if algebra == 'ultron':
+        #         stepwise = False
         s = big[pc]     # PC
         pc = pc+1       # PC
         if s =='-1':
