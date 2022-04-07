@@ -4,7 +4,7 @@ import tkinter.filedialog, tkinter.messagebox
 import os
 import tempfile
 from tkinter import filedialog
-# from numpy import roots
+from numpy import roots
 
 reg_name=[]
 reg_value=[]
@@ -16,14 +16,14 @@ print("DO YOU WANT TO EXECUTE EXPRESSION STEP WISE?\nIf yes, Print 1, else print
 # else:
 #     stepwise = False
 
-
+jjj= 0
 iii = 0
 def printee(txt):
     global iii
     iii = 0
     if(iii!=len(txt)):
         # print(txt[iii])
-        # print("_________")
+        print("_________")
         iii+=1
 
 
@@ -42,8 +42,8 @@ def filter(s):
                 rgind = rgind + 5
             else:
                 rgind = rgind +25
-        else:
-            print("Variable Name Mistaken")
+        # else:
+        #     print("")
         # print('x',rgind)
         return rgind
     elif(s[0] == 'x'):
@@ -51,8 +51,8 @@ def filter(s):
         
         if rgind.isdigit():
             rgind = int(rgind)
-        else:
-            print("Variable Name Mistaken")
+        # else:
+        #     print("")
         # print('x',rgind)
         return rgind
     elif(s[0] == 'a'):
@@ -60,8 +60,8 @@ def filter(s):
         
         if rgind.isdigit():
             rgind = 10 + int(rgind)
-        else:
-            print("Variable Name Mistaken")
+        # else:
+        #     print("")
         # print('x',rgind)
         return rgind
     elif(s[0] == 's'):
@@ -72,8 +72,8 @@ def filter(s):
                 rgind = rgind + 8
             else:
                 rgind = rgind + 16
-        else:
-            print("Variable Name Mistaken")
+        # else:
+        #     print(rgind)
         # print('x',rgind)
         return rgind        
     elif s.isdecimal():
@@ -86,9 +86,10 @@ def isLabel(s):
 N__ = 1024
 memory = [0]*N__
 reg = [0]*32
-
-def printreg(pc):
+pc = 0
+def printreg():
     # print(list(range(32)))
+    global pc
     reg[0] = 0
     pc_value.config(text= str(pc))
     for  i in range(32):
@@ -103,9 +104,9 @@ def printreg(pc):
         # elif reg[i]>1000:
         #     reg_value[i].config(padx = 33)
 
-        if reg[i]!=0:
+        '''if reg[i]!=0:
             print('x', end ='')
-            print(i,'=',reg[i], end = " | ")
+            print(i,'=',reg[i], end = " | ")'''
 
 
         # if i<1:
@@ -115,7 +116,7 @@ def printreg(pc):
         # else:
         #     strj = ", "
         # print(strj,reg[i], end = "")
-    print("\n","pc =",pc)   # PC
+    print("pc =",pc)   
 
 
 def listInd( ll, ele):
@@ -129,10 +130,17 @@ instr = ['ADD','SUB','MUL','ADDI','SUBI','MULI','LW','SW','BNE','BEQ','BGE','BLT
 target = dict()
 targetinv = dict()
 big = []
-pc = 0
+# pc = 0
 
-def print_area(listt):
+def setpc0():
+    global pc
     pc = 0
+    pc_value.config(text= str(pc))
+def print_area(listt):
+    # pc = 0
+    global pc
+    setpc0()
+    print("pc=",pc)
     for z in range(len(listt)):
         ooo = listt[z]        
         if ooo == '' or (ooo.split())[0][0] == '#':
@@ -140,29 +148,33 @@ def print_area(listt):
         big.append(ooo)
         if isLabel(ooo):
             ooo = list(ooo.split(':'))
-            target[ooo[0]] = pc                 # PC
-            targetinv[pc] = ooo[0]              # PC
+            ooo = ooo[0].split()
+            target[ooo[0]] = pc                 
+            targetinv[pc] = ooo[0]              
         pc = pc+1
 
     print(big)
     print(target)
-    pc = 0
+    # pc = 0
+    setpc0()
 
     while pc<len(big): 
-        # global stepwise                         # PC
+        # global stepwise                         
         # if(stepwise):
-        #     algebra = input()
+        #     # algebra = input()
         #     if algebra == 'ultron':
         #         stepwise = False
-        s = big[pc]     # PC
-        pc = pc+1       # PC
+        s = big[pc]
+        pc = pc+1
+        global jjj
+        jjj = jjj + 1
         if s =='-1':
             break
         if s == '':
             continue
         # else:
         #     pc = pc + 1
-        p = (s.replace(',', ''))
+        p = (s.replace(',', ' '))
         print (p)
         llist = p.split();
 
@@ -170,14 +182,17 @@ def print_area(listt):
         l = len(llist);
         t = []
         for i in range(1,l):
+            # hashind = llist[i].find('#')
+            # if (hashind!=-1):
+            #     llist[i] = llist[i][:hashind+1]
             t.append(llist[i].replace('$',''))
         opp = listInd(instr, llist[0])
+        
         if opp ==1000:
-            print("Its ok")
+            print("Its ok")            
         #     #      target[p2lp] = pc
         elif opp<6:
             for i in range(0,l-1):
-
                 rgind = filter(t[i])
                 if(i==0):
                     rd = rgind
@@ -191,16 +206,23 @@ def print_area(listt):
 
             if(opp==0):
                 reg[rd] = reg[rs1] + reg[rs2]
+                print("reg[",rd,"] = ",reg[rd],sep="")
+                
             elif(opp==1):
                 reg[rd] = reg[rs1] - reg[rs2]
+                print("reg[",rd,"] = ",reg[rd],sep="")
             elif opp ==2:
-                reg[rd] = reg[rs1] * reg[rs2]            
+                reg[rd] = reg[rs1] * reg[rs2]
+                print("reg[",rd,"] = ",reg[rd],sep="")            
             elif opp==3:
                 reg[rd] = reg[rs1] + rs2
+                print("reg[",rd,"] = ",reg[rd],sep="")
             elif opp==4:
                 reg[rd] = reg[rs1] - rs2
+                print("reg[",rd,"] = ",reg[rd],sep="")
             elif opp==5:
                 reg[rd] = reg[rs1] * rs2
+                print("reg[",rd,"] = ",reg[rd],sep="")
         elif opp == 6 or opp ==7 : 
             for i in range(0,l-1):            
 
@@ -249,25 +271,32 @@ def print_area(listt):
                 continue
             if opp == 8:
                 if(reg[rc1] != reg[rc2]):
-                    pc = target[t[2]]       # PC
+                    pc = target[t[2]]  
+                    print("Jumped to",t[2])     
             elif opp == 9:
                 if(reg[rc1] == reg[rc2]):
-                    pc = target[t[2]]       # PC
+                    pc = target[t[2]]
+                    print("Jumped to",t[2])        
             elif opp == 10:
                 if(reg[rc1] >= reg[rc2]):
                     pc = target[t[2]]
+                    print("Jumped to",t[2]) 
             elif opp == 11:
                 if(reg[rc1] < reg[rc2]):
                     pc = target[t[2]]
+                    print("Jumped to",t[2]) 
         elif opp == 12:
-            print("t[0]:",t[0])
-            pc = target[t[0]]               # PC
+            print("t[0]:",t[1],"\nJumped to",t[1])
+            pc = target[t[1]]
+            reg[1] = pc
             
-        printreg(pc)
+        printreg()        
+        print('No of Steps',jjj)
         printee(listt)
 
 
-# def print_area(txt):
+
+# def print_area(txt): 
 #     temp_file = tempfile.mktemp('.asm')
 #     open(temp_file, 'w').write(txt)
 #     os.startfile(temp_file)
@@ -284,10 +313,14 @@ pc_label.grid(row=0, column =0)
 pc_value =Label(root, text="0",padx = 60, pady=4,bg="#282823",fg="white",bd=3, font=("Arial,11"), relief=RIDGE)
 pc_value.grid(row=0, column =1)
 
+
 #Clear Button
 def clearReg():
-    global pc
-    pc = 0
+    # global pc
+    # pc = 0
+    setpc0()
+    print("pc=",pc)
+    pc_value.config(text= str(pc))
     for i in range (32):
         #make the values of elements in the backend register zero
         #register[i] = 0
@@ -450,6 +483,8 @@ t.place(x=4, y=50)
 #Function for opening a file
 global currFile
 def openTxt():
+    setpc0()
+    print("pc=",pc)
     asmFile = filedialog.askopenfilename(title = "Open .asm File", filetypes=((".asm Files", "*.asm"),))
     global currFile
     currFile = asmFile
@@ -474,7 +509,8 @@ def clrText():
 def loadBubbleSort():
     t.delete("1.0","end")
     t.insert(INSERT,
-    '''##-------------------------------Bubble Sort ---------------------------------------#
+'''
+#-------------------------------Bubble Sort ---------------------------------------#
 # In the given bubble sort program we are sorting 5 integers 
 # It shows sorted integers from x18 to x22
 # and unsorted from x27 to x31
@@ -530,10 +566,10 @@ SW x21, 0(x24)
 SW x22, 0(x25)
 skip:
 SUBI x19, x19, 1
-JAL iloop
+JAL ra, iloop
 iexit:
 ADDI x9, x9, 1
-JAL oloop
+JAL ra, oloop
 oexit:
 
 ADDI x23, x0, 0
