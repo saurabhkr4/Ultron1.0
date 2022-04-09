@@ -141,6 +141,7 @@ def setpc0():
     pc_value.config(text= str(pc))
 def print_area(listt):
     # pc = 0
+    clearBig()
     global pc
     setpc0()
     print("pc=",pc)
