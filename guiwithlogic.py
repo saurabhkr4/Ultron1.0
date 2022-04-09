@@ -131,6 +131,9 @@ target = dict()
 targetinv = dict()
 big = []
 # pc = 0
+def clearBig():
+    global big
+    big = []
 
 def setpc0():
     global pc
@@ -484,6 +487,8 @@ t.place(x=4, y=50)
 global currFile
 def openTxt():
     setpc0()
+    clearBig()
+    clearReg()
     print("pc=",pc)
     asmFile = filedialog.askopenfilename(title = "Open .asm File", filetypes=((".asm Files", "*.asm"),))
     global currFile
@@ -503,10 +508,12 @@ def saveTxt():
 #Function for clearing the text area
 def clrText():
     #set linenumber = 0
+    clearBig()
     t.delete("1.0","end")
 
 #load Bubble Sort file
 def loadBubbleSort():
+    clearBig()
     t.delete("1.0","end")
     t.insert(INSERT,
 '''
