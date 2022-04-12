@@ -1,10 +1,12 @@
 
+from calendar import c
+import opcode
 from tkinter import *
 import tkinter.filedialog, tkinter.messagebox
 import os
 import tempfile
 from tkinter import filedialog
-from numpy import roots
+from numpy import cfloat, roots
 
 reg_name=[]
 reg_value=[]
@@ -26,9 +28,55 @@ def printee(txt):
         print("_________")
         iii+=1
 
+def isValidLine(llist):
+    return listInd(instr, llist[0])!=100000
+# def noOfStalls(cflow,k):
+#     return 1
+def Dependency(cflow,k):
+    lll = cflow[k] 
+    op = listInd(instr,lll[0])
+    if op<6:
+        read1 = lll[2]
+        if k>0:
+            if cflow[k-1][1] == read1:# take care with branches
+                return 1
+        if k>1:
+            if cflow[k-2][1] == read1:
+                return 2
+        if op<3:
+            read2 = lll[3]
+            if k>0:
+                if cflow[k-1][1] == read2:  # take care with branches
+                    return 1
+            if k>1:
+                if cflow[k-2][1] == read2:
+                    return 2
+        return 0
+    
+    elif op == 6:
+        print('Correction Required on Load')
+        return 0  # Correction required
+    elif op == 7:
+        read1 = lll[1]
+        if k>0:
+            if cflow[k-1][1] == read1:# take care with branches
+                return 1
+        if k>1:
+            if cflow[k-2][1] == read1:
+                return 2
+        return 0
 
-
-
+    elif op< 12:        
+        read1 = lll[1]
+        if k>0:
+            if cflow[k-1][1] == read1: # take care with branches
+                return 1
+        if k>1:
+            if cflow[k-2][1] == read1:
+                return 2
+        
+        return 0
+    return 0
 def t_type(s):
     # print("Operation Peformed")
     return s[1:]
@@ -89,6 +137,12 @@ reg = [0]*32
 pc = 0
 def printreg():
     # print(list(range(32)))
+    print('cfl:')
+    for u in range(len(cflow)):
+        print(u,'-',Dependency(cflow, u),'-',cflow[u])
+        
+    # for cfl in cflow.keys():
+    #     print(cfl,'-',cflow[cfl])
     global pc
     reg[0] = 0
     pc_value.config(text= str(pc))
@@ -101,13 +155,13 @@ def printreg():
         #     reg_value[i].config(padx = 54)
         # elif reg[i]>100:
         #     reg_value[i].config(padx = 38)
-        # elif reg[i]>1000:
+        # elif reg[i]>100000:
         #     reg_value[i].config(padx = 33)
 
         '''if reg[i]!=0:
             print('x', end ='')
             print(i,'=',reg[i], end = " | ")'''
-
+        
 
         # if i<1:
         #     strj = ""
@@ -123,17 +177,21 @@ def listInd( ll, ele):
     if ll.count(ele):
         return ll.index(ele)
     else:
-        return 1000
+        return 100000
 
 instr = ['ADD','SUB','MUL','ADDI','SUBI','MULI','LW','SW','BNE','BEQ','BGE','BLT','JAL']
-
+cflow = dict()
 target = dict()
 targetinv = dict()
 big = []
 # pc = 0
 def clearBig():
-    global big
+    global big,cflow,target,targetinv
     big = []
+    cflow = dict() 
+    target = dict()
+    targetinv = dict()
+
 
 def setpc0():
     global pc
@@ -171,7 +229,8 @@ def print_area(listt):
         s = big[pc]
         pc = pc+1
         global jjj
-        jjj = jjj + 1
+        
+        
         if s =='-1':
             break
         if s == '':
@@ -180,8 +239,11 @@ def print_area(listt):
         #     pc = pc + 1
         p = (s.replace(',', ' '))
         print (p)
-        llist = p.split();
-
+        llist = p.split()
+        if isValidLine(llist):
+            global cflow
+            cflow[jjj] = llist
+            jjj = jjj + 1
         # print (llist)
         l = len(llist);
         t = []
@@ -192,7 +254,7 @@ def print_area(listt):
             t.append(llist[i].replace('$',''))
         opp = listInd(instr, llist[0])
         
-        if opp ==1000:
+        if opp ==100000:
             print("Its ok")            
         #     #      target[p2lp] = pc
         elif opp<6:
@@ -295,9 +357,8 @@ def print_area(listt):
             reg[1] = pc
             
         printreg()        
-        print('No of Steps',jjj)
+        print('No of Steps-',jjj)
         printee(listt)
-
 
 
 # def print_area(txt): 
