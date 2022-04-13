@@ -30,52 +30,87 @@ def printee(txt):
 
 def isValidLine(llist):
     return listInd(instr, llist[0])!=100000
+
 # def noOfStalls(cflow,k):
 #     return 1
+def writtenReg(llist):
+    op = listInd(instr, llist[0])
+    if op<7 :
+        return llist[1]
+    if op == 6:
+        return llist[2]
+    return 'NULL'
 def Dependency(cflow,k):
+    # 0-> No Stall
+    # 1-> 2 Stalls in non-forwarding
+    # 2-> 1 Stall  in     forwarding
+    # 3-> 1 Stall  in Both
+    # 4-> 1 Stall in Forwarding, 2 stalls in Non-Forwarding
     lll = cflow[k] 
     op = listInd(instr,lll[0])
+    if k>0 and listInd(instr, cflow[k-1][0]) >7 :
+        return 3
     if op<6:
-        read1 = lll[2]
+        read1 = lll[2]        
         if k>0:
-            if cflow[k-1][1] == read1:# take care with branches
+            if cflow[k-1][2] == 'LW':
+                return 4
+            if writtenReg(cflow[k-1]) == read1 and Dependency(cflow,k-1)==0:# take care with branches
                 return 1
         if k>1:
-            if cflow[k-2][1] == read1:
+            if writtenReg(cflow[k-2]) == read1 and Dependency(cflow,k-2)==0:
                 return 2
         if op<3:
             read2 = lll[3]
             if k>0:
-                if cflow[k-1][1] == read2:  # take care with branches
+                if writtenReg(cflow[k-1]) == read2 and Dependency(cflow,k-1)==0:  # take care with branches
                     return 1
             if k>1:
-                if cflow[k-2][1] == read2:
+                if writtenReg(cflow[k-2]) == read2 and Dependency(cflow,k-2)==0:
                     return 2
-        return 0
+
     
     elif op == 6:
-        print('Correction Required on Load')
-        return 0  # Correction required
+        if lll[2].find('(') != -1:
+            ti = lll[2].replace('(', " ").replace(')'," ")
+            ti = ti.split();
+            oadd = int(ti[0])
+            if(len(ti)>1):
+                oin = ti[1]
+                # print ("->>>>>",oin, oadd)
+                if k>0:
+                    if oin == writtenReg(cflow[k-1]) and Dependency(cflow,k-1)==0:
+                        return 1
+                if k>1:
+                    if oin == writtenReg(cflow[k-2]) and Dependency(cflow,k-2)==0:
+                        return 2
+            else:
+                print("Wrong Memory Fetch")
+
     elif op == 7:
         read1 = lll[1]
         if k>0:
-            if cflow[k-1][1] == read1:# take care with branches
+            if writtenReg(cflow[k-1]) == read1 and Dependency(cflow,k-1)==0:# take care with branches
                 return 1
         if k>1:
-            if cflow[k-2][1] == read1:
+            if writtenReg(cflow[k-2]) == read1 and  Dependency(cflow,k-2)==0:
                 return 2
-        return 0
 
     elif op< 12:        
         read1 = lll[1]
         if k>0:
-            if cflow[k-1][1] == read1: # take care with branches
+            if writtenReg(cflow[k-1]) == read1 and Dependency(cflow,k-1)==0: # take care with branches
                 return 1
         if k>1:
-            if cflow[k-2][1] == read1:
+            if writtenReg(cflow[k-2]) == read1 and Dependency(cflow,k-2)==0:
                 return 2
-        
-        return 0
+        read2 = lll[2]
+        if k>0:
+            if writtenReg(cflow[k-1]) == read2 and Dependency(cflow,k-1)==0: # take care with branches
+                return 1
+        if k>1:
+            if writtenReg(cflow[k-2]) == read2 and Dependency(cflow,k-2)==0:
+                return 2  
     return 0
 def t_type(s):
     # print("Operation Peformed")
@@ -137,10 +172,6 @@ reg = [0]*32
 pc = 0
 def printreg():
     # print(list(range(32)))
-    print('cfl:')
-    for u in range(len(cflow)):
-        print(u,'-',Dependency(cflow, u),'-',cflow[u])
-        
     # for cfl in cflow.keys():
     #     print(cfl,'-',cflow[cfl])
     global pc
@@ -186,11 +217,17 @@ targetinv = dict()
 big = []
 # pc = 0
 def clearBig():
-    global big,cflow,target,targetinv
+    global big,cflow,target,targetinv,jjj,pc,NonFor,forw
     big = []
     cflow = dict() 
     target = dict()
     targetinv = dict()
+    jjj = 0
+    pc = 0
+    NonFor = list()
+    forw  = list()
+
+
 
 
 def setpc0():
@@ -359,6 +396,68 @@ def print_area(listt):
         printreg()        
         print('No of Steps-',jjj)
         printee(listt)
+    
+    stepcount = len(cflow)
+    print('cfl:')
+    for u in range(stepcount):
+        print(u,'-',Dependency(cflow, u),'-',cflow[u])
+    
+    NonFor = [['   ' for Saurabh in range(4*(stepcount+1))] for Pranav in range(stepcount+1)]
+    forw = [['   ' for Saurabh in range(3*(stepcount))] for Pranav in range(stepcount)]
+    clk = 1
+    for u in range(stepcount):
+        dep = Dependency(cflow,u)
+        NonFor[u][clk-1] = 'IF '
+        NonFor[u][clk]   = 'ID '
+        if dep >0 :
+            NonFor[u][clk+1] = 'Stl'
+            clk = clk+1
+            if dep ==1 :
+                NonFor[u][clk+1] = 'Stl'
+                clk = clk+1
+        
+            if u > 0:
+                past = listInd(NonFor[u-1],'WB ')
+                pastclk = clk
+                if clk <past and past != 100000:
+                    clk = past
+                    for r in range(pastclk+1,clk+1):
+                        NonFor[u][r] = 'Stl'
+
+        NonFor[u][clk+1] = 'EXE'
+        NonFor[u][clk+2] = 'MEM'
+        NonFor[u][clk+3] = 'WB '
+        clk = clk+1
+        
+    
+    clk = 1
+    for u in range(stepcount):
+        dep = Dependency(cflow,u)
+        
+        forw[u][clk-1] = 'IF '
+        forw[u][clk]   = 'ID '
+        if dep == 3 or dep == 4:
+            forw[u][clk+1] = 'Stl'
+            clk = clk+1
+
+        forw[u][clk+1] = 'EXE'
+        forw[u][clk+2] = 'MEM'
+        forw[u][clk+3] = 'WB '
+        clk = clk+1
+    print('NON-FORWARDING-')
+    for y in NonFor:
+        u = 0
+        while(u<3*stepcount and y[u]!='WB '):
+            print(y[u], end ='|')
+            u = u+1
+        print('WB ')
+    print('\n________________________\n\nFORWARDING-')
+    for y in forw:
+        u = 0
+        while(u<3*stepcount and y[u]!='WB '):
+            print(y[u], end ='|')
+            u = u+1
+        print('WB ')
 
 
 # def print_area(txt): 
