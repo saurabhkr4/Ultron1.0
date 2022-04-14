@@ -44,8 +44,8 @@ def Dependency(cflow,k):
     # 0-> No Stall
     # 1-> 2 Stalls in non-forwarding
     # 2-> 1 Stall  in     forwarding
-    # 3-> 1 Stall  in Both
-    # 4-> 1 Stall in Forwarding, 2 stalls in Non-Forwarding
+    # 3-> 1 Stall  in Both -> Branches Stall
+    # 4-> 1 Stall in Forwarding, 2 stalls in Non-Forwarding -> Special Load-Add Stall
     lll = cflow[k] 
     op = listInd(instr,lll[0])
     if k>0 and listInd(instr, cflow[k-1][0]) >7 :
@@ -53,9 +53,9 @@ def Dependency(cflow,k):
     if op<6:
         read1 = lll[2]        
         if k>0:
-            if cflow[k-1][2] == 'LW':
+            if cflow[k-1][0] == 'LW':
                 return 4
-            if writtenReg(cflow[k-1]) == read1 and Dependency(cflow,k-1)==0:# take care with branches
+            if writtenReg(cflow[k-1]) == read1 and Dependency(cflow,k-1)==0: # take care with branches
                 return 1
         if k>1:
             if writtenReg(cflow[k-2]) == read1 and Dependency(cflow,k-2)==0:
@@ -68,7 +68,6 @@ def Dependency(cflow,k):
             if k>1:
                 if writtenReg(cflow[k-2]) == read2 and Dependency(cflow,k-2)==0:
                     return 2
-
     
     elif op == 6:
         if lll[2].find('(') != -1:
@@ -429,21 +428,65 @@ def print_area(listt):
         NonFor[u][clk+3] = 'WB '
         clk = clk+1
         
+    # def stall(cflow,forw,u,clk):
+        
+
     
     clk = 1
     for u in range(stepcount):
         dep = Dependency(cflow,u)
-        
-        forw[u][clk-1] = 'IF '
-        forw[u][clk]   = 'ID '
-        if dep == 3 or dep == 4:
-            forw[u][clk+1] = 'Stl'
+        if(dep<3):
+            
+            if u>0 and forw[u-1][clk] == 'Stl':
+                forw[u][clk]   = 'Stl'
+                clk = clk+1
+                forw[u][clk] =   'IF '
+                forw[u][clk+1] = 'ID '
+                forw[u][clk+2] = 'EXE'
+                forw[u][clk+3] = 'MEM'
+                forw[u][clk+4] = 'WB '
+                forw[u][clk+5] = 'WB '
+            elif u>0 and forw[u-1][clk+1] == 'Stl':
+                
+                forw[u][clk] = 'IF '
+                forw[u][clk+1]   = 'Stl'
+                clk = clk+1
+                forw[u][clk+1] = 'ID '
+                forw[u][clk+2] = 'EXE'
+                forw[u][clk+3] = 'MEM'
+                forw[u][clk+4] = 'WB '
+                forw[u][clk+5] = 'WB '
+            else:
+                if u>0 and forw[u-1][clk] == 'IF ':
+                    clk = clk + 1
+                forw[u][clk]   = 'IF '
+                forw[u][clk+1] = 'ID '
+                forw[u][clk+2] = 'EXE'
+                forw[u][clk+3] = 'MEM'
+                forw[u][clk+4] = 'WB '
+                clk = clk+1
+
+        elif dep == 3:
+            forw[u][clk]   = 'Stl'
+            clk = clk + 1
+            forw[u][clk]   = 'IF '
+            forw[u][clk+1] = 'ID '
+            forw[u][clk+2] = 'EXE'
+            forw[u][clk+3] = 'MEM'
+            forw[u][clk+4] = 'WB '
             clk = clk+1
 
-        forw[u][clk+1] = 'EXE'
-        forw[u][clk+2] = 'MEM'
-        forw[u][clk+3] = 'WB '
-        clk = clk+1
+        elif dep == 4:            
+            
+            forw[u][clk]   = 'IF '
+            forw[u][clk+1] = 'ID '
+            forw[u][clk+2]   = 'Stl'
+            clk = clk+1
+            forw[u][clk+2] = 'EXE'
+            forw[u][clk+3] = 'MEM'
+            forw[u][clk+4] = 'WB '
+
+            
     print('NON-FORWARDING-')
     for y in NonFor:
         u = 0
