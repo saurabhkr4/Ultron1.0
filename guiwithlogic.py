@@ -421,8 +421,8 @@ def print_area(listt):
     for u in range(stepcount):
         print(u,'-',Dependency(cflow, u),'-',cflow[u])
     
-    NonFor = [['   ' for Saurabh in range(3*(stepcount+1))] for Pranav in range(stepcount)]
-    forw = [['   ' for Saurabh in range(3*(stepcount))] for Pranav in range(stepcount)]
+    NonFor = [['   ' for Pranav in range(5*(stepcount))] for Saurabh in range(stepcount)]
+    forw = [['   ' for Saurabh in range(5*(stepcount))] for Pranav in range(stepcount)]
     clk = 1
     for u in range(stepcount):
         dep = Dependency(cflow,u)
@@ -554,7 +554,8 @@ def print_area(listt):
                 NonFor[u][clk+3] = 'MEM'
                 NonFor[u][clk+4] = 'WB '
                 clk = clk -2
-            elif dep == 1 or dep == 4:                
+            elif dep == 1 or dep == 4: 
+                print('special')               
                 NonFor[u][clk+2] = 'Stl'
                 clk = clk + 1
                 NonFor[u][clk+2] = 'Stl'
@@ -585,7 +586,8 @@ def print_area(listt):
                 NonFor[u][clk+3] = 'MEM'
                 NonFor[u][clk+4] = 'WB '
                 clk = clk -1
-            elif dep == 1 or dep == 4:                
+            elif dep == 1 or dep == 4:    
+                        
                 NonFor[u][clk+2] = 'Stl'
                 clk = clk + 1
                 NonFor[u][clk+2] = 'Stl'
@@ -761,14 +763,19 @@ def print_area(listt):
     print('NON-FORWARDING-')
     for y in NonFor:
         u = 0
-        while(u<3*stepcount and y[u]!='WB '):
+        while(u<5*stepcount and y[u]!='WB '):
             print(y[u], end ='|')
             u = u+1
         print('WB ')
+    # #
+    # for y in NonFor:
+    #     print(y)
+    # #
+
     print('\n________________________\n\nFORWARDING-')
     for y in forw:
         u = 0
-        while(u<3*stepcount and y[u]!='WB '):
+        while(u<5*stepcount and y[u]!='WB '):
             print(y[u], end ='|')
             u = u+1
         print('WB ')
