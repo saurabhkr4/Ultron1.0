@@ -753,7 +753,7 @@ def print_area(listt):
             
             forw[u][clk]   = 'IF '
             forw[u][clk+1] = 'ID '
-            forw[u][clk+2]   = 'Stl'
+            forw[u][clk+2] = 'Stl'
             clk = clk+1
             forw[u][clk+2] = 'EXE'
             forw[u][clk+3] = 'MEM'
