@@ -30,7 +30,7 @@ def printee(txt):
         iii+=1
 
 def isValidLine(llist):
-    return listInd(instr, llist[0])!=100000
+    return listInd(instr, llist[0])<13
 
 # def noOfStalls(cflow,k):
 #     return 1
