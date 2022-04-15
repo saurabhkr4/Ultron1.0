@@ -308,7 +308,7 @@ def print_area(listt):
             # if (hashind!=-1):
             #     llist[i] = llist[i][:hashind+1]
             t.append(llist[i].replace('$',''))
-        opp = listInd(instr, llist[0])
+        opp = listInd(instr, llist[0].upper())
         
         if opp ==100000:
             print("Its ok")            
