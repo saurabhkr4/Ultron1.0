@@ -1,5 +1,6 @@
 
 from calendar import c
+import glob
 import opcode
 from tkinter import *
 import tkinter.filedialog, tkinter.messagebox
@@ -12,11 +13,11 @@ reg_name=[]
 reg_value=[]
 
 print("DO YOU WANT TO EXECUTE EXPRESSION STEP WISE?\nIf yes, Print 1, else print 0")
-# stepwise = int(input())
-# if stepwise ==1:
-#     stepwise= True
-# else:
-#     stepwise = False
+stepwise = int(input())
+if stepwise ==1:
+    stepwise= True
+else:
+    stepwise = False
 
 jjj= 0
 iii = 0
@@ -187,6 +188,7 @@ def isLabel(s):
     return s.find(':')!=-1
 N__ = 1024
 memory = [0]*N__
+mll = set()
 reg = [0]*32
 pc = 0
 def printreg():
@@ -229,14 +231,14 @@ def listInd( ll, ele):
     else:
         return 100000
 
-instr = ['ADD','SUB','MUL','ADDI','SUBI','MULI','LW','SW','BNE','BEQ','BGE','BLT','JAL']
+instr = ['ADD','SUB','MUL','ADDI','SUBI','MULI','LW','SW','BNE','BEQ','BGE','BLT','JAL','.text','.data']
 cflow = dict()
 target = dict()
 targetinv = dict()
 big = []
 # pc = 0
 def clearBig():
-    global big,cflow,target,targetinv,jjj,pc,NonFor,forw
+    global big,cflow,target,targetinv,jjj,pc,NonFor,forw, mll
     big = []
     cflow = dict() 
     target = dict()
@@ -245,6 +247,7 @@ def clearBig():
     pc = 0
     NonFor = list()
     forw  = list()
+    mll = set()
 
 
 
@@ -277,11 +280,11 @@ def print_area(listt):
     setpc0()
 
     while pc<len(big): 
-        # global stepwise                         
-        # if(stepwise):
-        #     # algebra = input()
-        #     if algebra == 'ultron':
-        #         stepwise = False
+        global stepwise                         
+        if(stepwise):
+            algebra = input()
+            if algebra == 'ultron':
+                stepwise = False
         s = big[pc]
         pc = pc+1
         global jjj
@@ -378,6 +381,8 @@ def print_area(listt):
                 print ('reg[',rreg,']=', reg[rreg])
             elif opp == 7:
                 memory[rmem] = reg[rreg]
+                global mll
+                mll.add(rmem)
                 print ('reg[',rreg,']=', reg[rreg])
                 print ('memory[',rmem,']=', memory[rmem])
         elif opp >= 8 and opp <= 11:
@@ -415,7 +420,12 @@ def print_area(listt):
         printreg()        
         print('No of Steps-',jjj)
         printee(listt)
-    
+    print('Memory-')
+    if len(mll) == 0:
+        print('NULL')
+    for rmem in mll:
+        print ('memory[',rmem,']=', memory[rmem])
+
     stepcount = len(cflow)
     print('cfl:')
     for u in range(stepcount):
@@ -426,12 +436,20 @@ def print_area(listt):
     clk = 1
     for u in range(stepcount):
         dep = Dependency(cflow,u)
+        if dep == 3 :
+            NonFor [u][clk] = 'Stl'
+            clk = clk +1 
+            
+            if u>0 and NonFor[u-1][clk] == 'Stl':
+                NonFor [u][clk] = 'Stl'
+                clk = clk +1 
         if u>0 and NonFor[u-1][clk] == 'Stl' and NonFor[u-1][clk+1] == 'Stl' and NonFor[u-1][clk+3] == 'Stl' and NonFor[u-1][clk+4] == 'Stl':
             print('DETECTED-----------------')
             NonFor[u][clk]   = 'Stl'
             clk = clk+1
             NonFor[u][clk]   = 'Stl'
             clk = clk+1
+             
             # if dep == 3:
             #     NonFor [u][clk] = 'Stl'
             #     clk = clk +1                
@@ -507,9 +525,9 @@ def print_area(listt):
             clk = clk+1
             NonFor[u][clk]   = 'Stl'
             clk = clk+1
-            if dep == 3:
-                NonFor [u][clk] = 'Stl'
-                clk = clk +1
+            # if dep == 3:
+            #     NonFor [u][clk] = 'Stl'
+            #     clk = clk +1
 
             NonFor[u][clk] =   'IF '
 
@@ -537,9 +555,9 @@ def print_area(listt):
           
                 clk = clk - 1
         elif u>0 and NonFor[u-1][clk+1] == 'Stl' and NonFor[u-1][clk+2] == 'Stl':
-            if dep == 3:
-                NonFor [u][clk] = 'Stl'
-                clk = clk +1
+            # if dep == 3:
+            #     NonFor [u][clk] = 'Stl'
+            #     clk = clk +1
             NonFor[u][clk] =   'IF '
             NonFor[u][clk+1]   = 'Stl'
             clk = clk+1
@@ -573,9 +591,9 @@ def print_area(listt):
         elif u>0 and NonFor[u-1][clk] == 'Stl':
             NonFor[u][clk]   = 'Stl'
             clk = clk+1
-            if dep == 3:
-                NonFor [u][clk] = 'Stl'
-                clk = clk +1
+            # if dep == 3:
+            #     NonFor [u][clk] = 'Stl'
+            #     clk = clk +1
             NonFor[u][clk] =   'IF '
             NonFor[u][clk+1] = 'ID '
             if dep == 2:
@@ -613,11 +631,11 @@ def print_area(listt):
             # NonFor[u][clk+4] = 'WB '
             # # NonFor[u][clk+5] = 'WB '
 
-            if dep == 3:
-                NonFor [u][clk] = 'Stl'
-                clk = clk +1
+            # if dep == 3:
+            #     NonFor [u][clk] = 'Stl'
+            #     clk = clk +1
             NonFor[u][clk] =  'IF '
-            NonFor[u][clk]   = 'Stl'
+            NonFor[u][clk+1]   = 'Stl'
             clk = clk+1
             NonFor[u][clk+1] = 'ID '
             if dep == 2:
@@ -652,9 +670,9 @@ def print_area(listt):
             # NonFor[u][clk+4] = 'WB '
             # clk = clk+1
 
-            if dep == 3:
-                NonFor [u][clk] = 'Stl'
-                clk = clk +1
+            # if dep == 3:
+            #     NonFor [u][clk] = 'Stl'
+            #     clk = clk +1
             NonFor[u][clk] =   'IF '
             NonFor[u][clk+1] = 'ID '
             if dep == 2:
@@ -759,7 +777,7 @@ def print_area(listt):
             forw[u][clk+3] = 'MEM'
             forw[u][clk+4] = 'WB '
     print("CLOCK CYCLES with Forwarding: ", clk)   
-            
+     
     print('NON-FORWARDING-')
     for y in NonFor:
         u = 0
@@ -779,8 +797,7 @@ def print_area(listt):
             print(y[u], end ='|')
             u = u+1
         print('WB ')
-
-
+        
 # def print_area(txt): 
 #     temp_file = tempfile.mktemp('.asm')
 #     open(temp_file, 'w').write(txt)
