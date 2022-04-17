@@ -70,15 +70,24 @@ Highlights of the Project in Previous Phase:-
 Phase II:
 Highlights of the Project in this Phase:- 
 •	It diagrammatically shows the pipeline flow of the code in the terminal.
+
 •	User can see the output of pipeline diagram in both – Forwarding and Non-Forwarding mode (in terminal).
+
 •	It gives the count of Clock Cycles in Forwarding and Non-Forwarding mode.
+
 •	It Tells the gives the count of Stalls in Forwarding and Non-Forwarding mode.
+
 •	It prints the memory elements after execution of the Program.
+
 •	5 Programs in . asm format are attached in repo-
 o	 BubbleSort.asm
+
 o	sumofTenNaturalNumbers.asm
+
 o	LoadStorecheck.asm
+
 o	SpecialStall.asm
+
 o	addreg.asm
 
 Possible Further Improvements:
