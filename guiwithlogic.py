@@ -778,6 +778,16 @@ def print_area(listt):
             forw[u][clk+4] = 'WB '
     print("CLOCK CYCLES with Forwarding: ", clk)   
      
+    for pranav,saurabh in enumerate(NonFor):
+        pranav = str(pranav+1)
+        while len(pranav)<3:
+            pranav = pranav + ' '
+        saurabh[0]= pranav
+    for pranav,saurabh in enumerate(forw):
+        pranav = str(pranav+1)
+        while len(pranav)<3:
+            pranav = pranav + ' '
+        saurabh[0]= pranav
     print('NON-FORWARDING-')
     for y in NonFor:
         u = 0
