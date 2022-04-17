@@ -507,7 +507,7 @@ def print_area(listt):
             clk = clk + 1 # terror
             if dep == 2:                
                 NonFor[u][clk+2] = 'Stl'
-                clk = clk + 1
+                clk = clk + 1  
                 NonFor[u][clk+2] = 'EXE'
                 NonFor[u][clk+3] = 'MEM'
                 NonFor[u][clk+4] = 'WB '
