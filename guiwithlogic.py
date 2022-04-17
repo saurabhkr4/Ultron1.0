@@ -735,6 +735,7 @@ def print_area(listt):
         
     # def stall(cflow,forw,u,clk):
     print("CLOCK CYCLES without Forwarding: ", listInd(NonFor[-1], 'WB '))   
+    
 
     
     clk = 1
@@ -791,6 +792,7 @@ def print_area(listt):
             forw[u][clk+3] = 'MEM'
             forw[u][clk+4] = 'WB '
     print("CLOCK CYCLES with Forwarding: ", listInd(forw[-1], 'WB ') )   
+       
      
     for pranav,saurabh in enumerate(NonFor):
         pranav = str(pranav+1)
@@ -821,7 +823,9 @@ def print_area(listt):
             print(y[u], end ='|')
             u = u+1
         print('WB ')
-        
+    print("CLOCK CYCLES without Forwarding: ", listInd(NonFor[-1], 'WB '))   
+    print("CLOCK CYCLES with Forwarding:    ", listInd(forw[-1], 'WB ') )
+    
 # def print_area(txt): 
 #     temp_file = tempfile.mktemp('.asm')
 #     open(temp_file, 'w').write(txt)
