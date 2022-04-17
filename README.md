@@ -68,6 +68,8 @@ Highlights of the Project in Previous Phase:-
 
 
 Phase II:
+![image](https://user-images.githubusercontent.com/84005308/163727511-0a50e4fa-094b-4fe9-af9a-7d7987f896b4.png)
+
 Highlights of the Project in this Phase:- 
 •	It diagrammatically shows the pipeline flow of the code in the terminal.
 
