@@ -56,18 +56,18 @@ def Dependency(cflow,k):
         if k>0:
             if cflow[k-1][0] == 'LW':
                 return 4
-            if writtenReg(cflow[k-1]) == read1 and Dependency(cflow,k-1)==0: # take care with branches
+            if writtenReg(cflow[k-1]) == read1 : # take care with branches
                 return 1
         if k>1:
-            if writtenReg(cflow[k-2]) == read1 and Dependency(cflow,k-2)==0:
+            if writtenReg(cflow[k-2]) == read1 :
                 return 2
         if op<3:
             read2 = lll[3]
             if k>0:
-                if writtenReg(cflow[k-1]) == read2 and Dependency(cflow,k-1)==0:  # take care with branches
+                if writtenReg(cflow[k-1]) == read2 :  # take care with branches
                     return 1
             if k>1:
-                if writtenReg(cflow[k-2]) == read2 and Dependency(cflow,k-2)==0:
+                if writtenReg(cflow[k-2]) == read2 :
                     return 2
     
     elif op == 6:
@@ -85,7 +85,7 @@ def Dependency(cflow,k):
                         else:
                             return 2
                 if k>1:
-                    if oin == writtenReg(cflow[k-2])  and Dependency(cflow,k-2)==0:
+                    if oin == writtenReg(cflow[k-2])  :
                         return 2
             else:
                 print("Wrong Memory Fetch")
@@ -95,7 +95,7 @@ def Dependency(cflow,k):
         read1 = lll[1]
         val = 0
         if k>0:
-            if writtenReg(cflow[k-1]) == read1 and Dependency(cflow,k-1)==0:# take care with branches
+            if writtenReg(cflow[k-1]) == read1 :# take care with branches
                 return 1
         if k>1:
             if writtenReg(cflow[k-2]) == read1 and  Dependency(cflow,k-2)==0:
@@ -111,7 +111,7 @@ def Dependency(cflow,k):
                     if oin == writtenReg(cflow[k-1]) :
                         return 1
                 if k>1:
-                    if oin == writtenReg(cflow[k-2]) and Dependency(cflow,k-2)==0:
+                    if oin == writtenReg(cflow[k-2]) :
                         return 2
             else:
                 print("Wrong Memory Fetch")
@@ -119,17 +119,17 @@ def Dependency(cflow,k):
     elif op< 12:        
         read1 = lll[1]
         if k>0:
-            if writtenReg(cflow[k-1]) == read1 and Dependency(cflow,k-1)==0: # take care with branches
+            if writtenReg(cflow[k-1]) == read1 : # take care with branches
                 return 1
         if k>1:
-            if writtenReg(cflow[k-2]) == read1 and Dependency(cflow,k-2)==0:
+            if writtenReg(cflow[k-2]) == read1 :
                 return 2
         read2 = lll[2]
         if k>0:
-            if writtenReg(cflow[k-1]) == read2 and Dependency(cflow,k-1)==0: # take care with branches
+            if writtenReg(cflow[k-1]) == read2 : # take care with branches
                 return 1
         if k>1:
-            if writtenReg(cflow[k-2]) == read2 and Dependency(cflow,k-2)==0:
+            if writtenReg(cflow[k-2]) == read2 :
                 return 2  
     return 0
 def t_type(s):
@@ -432,10 +432,11 @@ def print_area(listt):
         print(u,'-',Dependency(cflow, u),'-',cflow[u])
     
     NonFor = [['   ' for Pranav in range(5*(stepcount))] for Saurabh in range(stepcount)]
-    forw = [['   ' for Saurabh in range(5*(stepcount))] for Pranav in range(stepcount)]
+    forw   = [['   ' for Saurabh in range(5*(stepcount))] for Pranav in range(stepcount)]
     clk = 1
     for u in range(stepcount):
-        dep = Dependency(cflow,u)
+        dep = Dependency(cflow,u)        
+        
         if dep == 3 :
             NonFor [u][clk] = 'Stl'
             clk = clk +1 
@@ -443,6 +444,7 @@ def print_area(listt):
             if u>0 and NonFor[u-1][clk] == 'Stl':
                 NonFor [u][clk] = 'Stl'
                 clk = clk +1 
+            
         if u>0 and NonFor[u-1][clk] == 'Stl' and NonFor[u-1][clk+1] == 'Stl' and NonFor[u-1][clk+3] == 'Stl' and NonFor[u-1][clk+4] == 'Stl':
             print('DETECTED-----------------')
             NonFor[u][clk]   = 'Stl'
@@ -454,6 +456,8 @@ def print_area(listt):
             #     NonFor [u][clk] = 'Stl'
             #     clk = clk +1                
 
+            if u>0 and NonFor[u-1][clk] == 'IF ':
+                clk  = clk + 1
             NonFor[u][clk] =   'IF '
             NonFor [u][clk+1] = 'Stl'  
             clk = clk + 1       
@@ -495,6 +499,8 @@ def print_area(listt):
             #     clk = clk +1
                 
 
+            if u>0 and NonFor[u-1][clk] == 'IF ':
+                clk  = clk + 1
             NonFor[u][clk] =   'IF '
             NonFor [u][clk+1] = 'Stl'            
             NonFor[u][clk+2] = 'ID '
@@ -529,6 +535,8 @@ def print_area(listt):
             #     NonFor [u][clk] = 'Stl'
             #     clk = clk +1
 
+            if u>0 and NonFor[u-1][clk] == 'IF ':
+                clk  = clk + 1
             NonFor[u][clk] =   'IF '
 
             NonFor[u][clk+1] = 'ID '
@@ -558,6 +566,8 @@ def print_area(listt):
             # if dep == 3:
             #     NonFor [u][clk] = 'Stl'
             #     clk = clk +1
+            if u>0 and NonFor[u-1][clk] == 'IF ':
+                clk  = clk + 1
             NonFor[u][clk] =   'IF '
             NonFor[u][clk+1]   = 'Stl'
             clk = clk+1
@@ -594,6 +604,8 @@ def print_area(listt):
             # if dep == 3:
             #     NonFor [u][clk] = 'Stl'
             #     clk = clk +1
+            if u>0 and NonFor[u-1][clk] == 'IF ':
+                clk  = clk + 1
             NonFor[u][clk] =   'IF '
             NonFor[u][clk+1] = 'ID '
             if dep == 2:
@@ -673,6 +685,8 @@ def print_area(listt):
             # if dep == 3:
             #     NonFor [u][clk] = 'Stl'
             #     clk = clk +1
+            if u>0 and NonFor[u-1][clk] == 'IF ':
+                clk  = clk + 1
             NonFor[u][clk] =   'IF '
             NonFor[u][clk+1] = 'ID '
             if dep == 2:
@@ -720,7 +734,7 @@ def print_area(listt):
         # clk = clk+1
         
     # def stall(cflow,forw,u,clk):
-    print("CLOCK CYCLES without Forwarding: ", clk)   
+    print("CLOCK CYCLES without Forwarding: ", listInd(NonFor[-1], 'WB '))   
 
     
     clk = 1
@@ -776,7 +790,7 @@ def print_area(listt):
             forw[u][clk+2] = 'EXE'
             forw[u][clk+3] = 'MEM'
             forw[u][clk+4] = 'WB '
-    print("CLOCK CYCLES with Forwarding: ", clk)   
+    print("CLOCK CYCLES with Forwarding: ", listInd(forw[-1], 'WB ') )   
      
     for pranav,saurabh in enumerate(NonFor):
         pranav = str(pranav+1)
