@@ -12,12 +12,12 @@ from numpy import cfloat, roots
 reg_name=[]
 reg_value=[]
 
-print("DO YOU WANT TO EXECUTE EXPRESSION STEP WISE?\nIf yes, Print 1, else print 0")
-stepwise = int(input())
-if stepwise ==1:
-    stepwise= True
-else:
-    stepwise = False
+# print("DO YOU WANT TO EXECUTE EXPRESSION STEP WISE?\nIf yes, Print 1, else print 0")
+# stepwise = int(input())
+# if stepwise ==1:
+#     stepwise= True
+# else:
+#     stepwise = False
 
 jjj= 0
 iii = 0
@@ -280,11 +280,11 @@ def print_area(listt):
     setpc0()
 
     while pc<len(big): 
-        global stepwise                         
-        if(stepwise):
-            algebra = input()
-            if algebra == 'ultron':
-                stepwise = False
+        # global stepwise                         
+        # if(stepwise):
+        #     algebra = input()
+        #     if algebra == 'ultron':
+        #         stepwise = False
         s = big[pc]
         pc = pc+1
         global jjj
@@ -735,7 +735,10 @@ def print_area(listt):
         
     # def stall(cflow,forw,u,clk):
     print("CLOCK CYCLES without Forwarding: ", listInd(NonFor[-1], 'WB '))   
+    clockpulsesNonFor =  listInd(NonFor[-1], 'WB ')
+    StallsNonFor = clockpulsesNonFor - stepcount - 4
     
+
 
     
     clk = 1
@@ -792,7 +795,8 @@ def print_area(listt):
             forw[u][clk+3] = 'MEM'
             forw[u][clk+4] = 'WB '
     print("CLOCK CYCLES with Forwarding: ", listInd(forw[-1], 'WB ') )   
-       
+    clockpulsesFor =  listInd(forw[-1], 'WB ')
+    StallsFor = clockpulsesFor - stepcount - 4
      
     for pranav,saurabh in enumerate(NonFor):
         pranav = str(pranav+1)
@@ -826,6 +830,8 @@ def print_area(listt):
     print("CLOCK CYCLES without Forwarding: ", listInd(NonFor[-1], 'WB '))   
     print("CLOCK CYCLES with Forwarding:    ", listInd(forw[-1], 'WB ') )
     
+    print('\nNumber of Stalls without Forwarding: ', StallsNonFor)
+    print('Number of Stalls in Forwarding:      ',StallsFor )
 # def print_area(txt): 
 #     temp_file = tempfile.mktemp('.asm')
 #     open(temp_file, 'w').write(txt)
