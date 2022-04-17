@@ -231,7 +231,7 @@ def listInd( ll, ele):
     else:
         return 100000
 
-instr = ['ADD','SUB','MUL','ADDI','SUBI','MULI','LW','SW','BNE','BEQ','BGE','BLT','JAL','.text','.data']
+instr = ['ADD','SUB','MUL','ADDI','SUBI','MULI','LW','SW','BNE','BEQ','BGE','BLT','JAL','.text','.data','end']
 cflow = dict()
 target = dict()
 targetinv = dict()
