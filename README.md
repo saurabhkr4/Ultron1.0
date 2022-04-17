@@ -12,7 +12,7 @@ The <b>sorted array</b> is stored in the registers from <b>x18</b> to <b>x22</b>
 
 <b>How to use</b>
 
-**Step 1: Run guiwithlogic.py file**
+**Step 1: From the main branch, Run guiwithlogic.py file**
 
 **Step 2: Click on the Bubble Sort Button**
 
@@ -22,7 +22,7 @@ The <b>sorted array</b> is stored in the registers from <b>x18</b> to <b>x22</b>
 
 **Step 3: Click on the Run Button**
 <img width="939" alt="Untitled2" src="https://user-images.githubusercontent.com/97940574/156937547-b80524f7-d2a2-4091-9c2e-5512ce7c9c29.png">
-
+**Using OPEN button, one can load further more codes tooo**
 
 
 
@@ -36,5 +36,4 @@ Along with BubbleSort.asm, also try running sumofTenNaturalNumbers.asm and LoadS
 
 <img width="941" alt="Untitled3" src="https://user-images.githubusercontent.com/97940574/156926307-51d6174a-1b60-4616-8483-4a9abf76f332.png">
 
-<b>Regarding Pipeline:</b>
-    Pipeline can be seen in the command line, We tried to do it in the GUI by using frames, toplevels, canvas etc. but we could not do it.
+

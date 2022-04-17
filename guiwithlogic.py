@@ -1,34 +1,137 @@
 
+from calendar import c
+import glob
+import opcode
 from tkinter import *
 import tkinter.filedialog, tkinter.messagebox
 import os
 import tempfile
 from tkinter import filedialog
-# from numpy import roots
+from numpy import cfloat, roots
 
 reg_name=[]
 reg_value=[]
 
-print("DO YOU WANT TO EXECUTE EXPRESSION STEP WISE?\nIf yes, Print 1, else print 0")
+# print("DO YOU WANT TO EXECUTE EXPRESSION STEP WISE?\nIf yes, Print 1, else print 0")
 # stepwise = int(input())
 # if stepwise ==1:
 #     stepwise= True
 # else:
 #     stepwise = False
 
-
+jjj= 0
 iii = 0
 def printee(txt):
     global iii
     iii = 0
     if(iii!=len(txt)):
         # print(txt[iii])
-        # print("_________")
+        print("_________")
         iii+=1
 
+def isValidLine(llist):
+    return listInd(instr, llist[0])<13
+
+# def noOfStalls(cflow,k):
+#     return 1
+def writtenReg(llist):
+    op = listInd(instr, llist[0])
+    if op<7 :
+        return llist[1]
+    if op == 6:
+        return llist[2]
+    return 'NULL'
+def Dependency(cflow,k):
+    # 0-> No Stall
+    # 1-> 2 Stalls in non-forwarding
+    # 2-> 1 Stall  in     forwarding
+    # 3-> 1 Stall  in Both -> Branches Stall
+    # 4-> 1 Stall in Forwarding, 2 stalls in Non-Forwarding -> Special Load-Add Stall
+    lll = cflow[k] 
+    op = listInd(instr,lll[0])
+    if k>0 and listInd(instr, cflow[k-1][0]) > 7 :
+        return 3
+    if op<6:
+        read1 = lll[2]        
+        if k>0:
+            if cflow[k-1][0] == 'LW':
+                return 4
+            if writtenReg(cflow[k-1]) == read1 : # take care with branches
+                return 1
+        if k>1:
+            if writtenReg(cflow[k-2]) == read1 :
+                return 2
+        if op<3:
+            read2 = lll[3]
+            if k>0:
+                if writtenReg(cflow[k-1]) == read2 :  # take care with branches
+                    return 1
+            if k>1:
+                if writtenReg(cflow[k-2]) == read2 :
+                    return 2
+    
+    elif op == 6:
+        if lll[2].find('(') != -1:
+            ti = lll[2].replace('(', " ").replace(')'," ")
+            ti = ti.split();
+            oadd = int(ti[0])
+            if(len(ti)>1):
+                oin = ti[1]
+                # print ("->>>>>",oin, oadd)
+                if k>0:
+                    if oin == writtenReg(cflow[k-1]) :
+                        if Dependency(cflow,k-1)==0:
+                            return 1
+                        else:
+                            return 2
+                if k>1:
+                    if oin == writtenReg(cflow[k-2])  :
+                        return 2
+            else:
+                print("Wrong Memory Fetch")
 
 
-
+    elif op == 7:
+        read1 = lll[1]
+        val = 0
+        if k>0:
+            if writtenReg(cflow[k-1]) == read1 :# take care with branches
+                return 1
+        if k>1:
+            if writtenReg(cflow[k-2]) == read1 and  Dependency(cflow,k-2)==0:
+                val = 2
+        if lll[2].find('(') != -1:
+            ti = lll[2].replace('(', " ").replace(')'," ")
+            ti = ti.split();
+            oadd = int(ti[0])
+            if(len(ti)>1):
+                oin = ti[1]
+                # print ("->>>>>",oin, oadd)
+                if k>0:
+                    if oin == writtenReg(cflow[k-1]) :
+                        return 1
+                if k>1:
+                    if oin == writtenReg(cflow[k-2]) :
+                        return 2
+            else:
+                print("Wrong Memory Fetch")
+        return val
+    elif op< 12:        
+        read1 = lll[1]
+        if k>0:
+            if writtenReg(cflow[k-1]) == read1 : # take care with branches
+                return 1
+        if k>1:
+            if writtenReg(cflow[k-2]) == read1 :
+                return 2
+        read2 = lll[2]
+        if k>0:
+            if writtenReg(cflow[k-1]) == read2 : # take care with branches
+                return 1
+        if k>1:
+            if writtenReg(cflow[k-2]) == read2 :
+                return 2  
+    return 0
 def t_type(s):
     # print("Operation Peformed")
     return s[1:]
@@ -42,8 +145,8 @@ def filter(s):
                 rgind = rgind + 5
             else:
                 rgind = rgind +25
-        else:
-            print("Variable Name Mistaken")
+        # else:
+        #     print("")
         # print('x',rgind)
         return rgind
     elif(s[0] == 'x'):
@@ -51,8 +154,8 @@ def filter(s):
         
         if rgind.isdigit():
             rgind = int(rgind)
-        else:
-            print("Variable Name Mistaken")
+        # else:
+        #     print("")
         # print('x',rgind)
         return rgind
     elif(s[0] == 'a'):
@@ -60,8 +163,8 @@ def filter(s):
         
         if rgind.isdigit():
             rgind = 10 + int(rgind)
-        else:
-            print("Variable Name Mistaken")
+        # else:
+        #     print("")
         # print('x',rgind)
         return rgind
     elif(s[0] == 's'):
@@ -72,8 +175,8 @@ def filter(s):
                 rgind = rgind + 8
             else:
                 rgind = rgind + 16
-        else:
-            print("Variable Name Mistaken")
+        # else:
+        #     print(rgind)
         # print('x',rgind)
         return rgind        
     elif s.isdecimal():
@@ -85,10 +188,14 @@ def isLabel(s):
     return s.find(':')!=-1
 N__ = 1024
 memory = [0]*N__
+mll = set()
 reg = [0]*32
-
-def printreg(pc):
+pc = 0
+def printreg():
     # print(list(range(32)))
+    # for cfl in cflow.keys():
+    #     print(cfl,'-',cflow[cfl])
+    global pc
     reg[0] = 0
     pc_value.config(text= str(pc))
     for  i in range(32):
@@ -100,13 +207,13 @@ def printreg(pc):
         #     reg_value[i].config(padx = 54)
         # elif reg[i]>100:
         #     reg_value[i].config(padx = 38)
-        # elif reg[i]>1000:
+        # elif reg[i]>100000:
         #     reg_value[i].config(padx = 33)
 
-        if reg[i]!=0:
+        '''if reg[i]!=0:
             print('x', end ='')
-            print(i,'=',reg[i], end = " | ")
-
+            print(i,'=',reg[i], end = " | ")'''
+        
 
         # if i<1:
         #     strj = ""
@@ -115,24 +222,46 @@ def printreg(pc):
         # else:
         #     strj = ", "
         # print(strj,reg[i], end = "")
-    print("\n","pc =",pc)   # PC
+    print("pc =",pc)   
 
 
 def listInd( ll, ele):
     if ll.count(ele):
         return ll.index(ele)
     else:
-        return 1000
+        return 100000
 
-instr = ['ADD','SUB','MUL','ADDI','SUBI','MULI','LW','SW','BNE','BEQ','BGE','BLT','JAL']
-
+instr = ['ADD','SUB','MUL','ADDI','SUBI','MULI','LW','SW','BNE','BEQ','BGE','BLT','JAL','.text','.data','end']
+cflow = dict()
 target = dict()
 targetinv = dict()
 big = []
-pc = 0
-
-def print_area(listt):
+# pc = 0
+def clearBig():
+    global big,cflow,target,targetinv,jjj,pc,NonFor,forw, mll
+    big = []
+    cflow = dict() 
+    target = dict()
+    targetinv = dict()
+    jjj = 0
     pc = 0
+    NonFor = list()
+    forw  = list()
+    mll = set()
+
+
+
+
+def setpc0():
+    global pc
+    pc = 0
+    pc_value.config(text= str(pc))
+def print_area(listt):
+    # pc = 0
+    clearBig()
+    global pc
+    setpc0()
+    print("pc=",pc)
     for z in range(len(listt)):
         ooo = listt[z]        
         if ooo == '' or (ooo.split())[0][0] == '#':
@@ -140,44 +269,55 @@ def print_area(listt):
         big.append(ooo)
         if isLabel(ooo):
             ooo = list(ooo.split(':'))
-            target[ooo[0]] = pc                 # PC
-            targetinv[pc] = ooo[0]              # PC
+            ooo = ooo[0].split()
+            target[ooo[0]] = pc                 
+            targetinv[pc] = ooo[0]              
         pc = pc+1
 
     print(big)
     print(target)
-    pc = 0
+    # pc = 0
+    setpc0()
 
     while pc<len(big): 
-        # global stepwise                         # PC
+        # global stepwise                         
         # if(stepwise):
         #     algebra = input()
         #     if algebra == 'ultron':
         #         stepwise = False
-        s = big[pc]     # PC
-        pc = pc+1       # PC
+        s = big[pc]
+        pc = pc+1
+        global jjj
+        
+        
         if s =='-1':
             break
         if s == '':
             continue
         # else:
         #     pc = pc + 1
-        p = (s.replace(',', ''))
+        p = (s.replace(',', ' '))
         print (p)
-        llist = p.split();
-
+        llist = p.split()
+        if isValidLine(llist):
+            global cflow
+            cflow[jjj] = llist
+            jjj = jjj + 1
         # print (llist)
         l = len(llist);
         t = []
         for i in range(1,l):
+            # hashind = llist[i].find('#')
+            # if (hashind!=-1):
+            #     llist[i] = llist[i][:hashind+1]
             t.append(llist[i].replace('$',''))
-        opp = listInd(instr, llist[0])
-        if opp ==1000:
-            print("Its ok")
+        opp = listInd(instr, llist[0].upper())
+        
+        if opp ==100000:
+            print("Its ok")            
         #     #      target[p2lp] = pc
         elif opp<6:
             for i in range(0,l-1):
-
                 rgind = filter(t[i])
                 if(i==0):
                     rd = rgind
@@ -191,16 +331,23 @@ def print_area(listt):
 
             if(opp==0):
                 reg[rd] = reg[rs1] + reg[rs2]
+                print("reg[",rd,"] = ",reg[rd],sep="")
+                
             elif(opp==1):
                 reg[rd] = reg[rs1] - reg[rs2]
+                print("reg[",rd,"] = ",reg[rd],sep="")
             elif opp ==2:
-                reg[rd] = reg[rs1] * reg[rs2]            
+                reg[rd] = reg[rs1] * reg[rs2]
+                print("reg[",rd,"] = ",reg[rd],sep="")            
             elif opp==3:
                 reg[rd] = reg[rs1] + rs2
+                print("reg[",rd,"] = ",reg[rd],sep="")
             elif opp==4:
                 reg[rd] = reg[rs1] - rs2
+                print("reg[",rd,"] = ",reg[rd],sep="")
             elif opp==5:
                 reg[rd] = reg[rs1] * rs2
+                print("reg[",rd,"] = ",reg[rd],sep="")
         elif opp == 6 or opp ==7 : 
             for i in range(0,l-1):            
 
@@ -234,6 +381,8 @@ def print_area(listt):
                 print ('reg[',rreg,']=', reg[rreg])
             elif opp == 7:
                 memory[rmem] = reg[rreg]
+                global mll
+                mll.add(rmem)
                 print ('reg[',rreg,']=', reg[rreg])
                 print ('memory[',rmem,']=', memory[rmem])
         elif opp >= 8 and opp <= 11:
@@ -249,25 +398,441 @@ def print_area(listt):
                 continue
             if opp == 8:
                 if(reg[rc1] != reg[rc2]):
-                    pc = target[t[2]]       # PC
+                    pc = target[t[2]]  
+                    print("Jumped to",t[2])     
             elif opp == 9:
                 if(reg[rc1] == reg[rc2]):
-                    pc = target[t[2]]       # PC
+                    pc = target[t[2]]
+                    print("Jumped to",t[2])        
             elif opp == 10:
                 if(reg[rc1] >= reg[rc2]):
                     pc = target[t[2]]
+                    print("Jumped to",t[2]) 
             elif opp == 11:
                 if(reg[rc1] < reg[rc2]):
                     pc = target[t[2]]
+                    print("Jumped to",t[2]) 
         elif opp == 12:
-            print("t[0]:",t[0])
-            pc = target[t[0]]               # PC
+            print("t[0]:",t[1],"\nJumped to",t[1])
+            pc = target[t[1]]
+            reg[1] = pc
             
-        printreg(pc)
+        printreg()        
+        print('No of Steps-',jjj)
         printee(listt)
+    print('Memory-')
+    if len(mll) == 0:
+        print('NULL')
+    for rmem in mll:
+        print ('memory[',rmem,']=', memory[rmem])
+
+    stepcount = len(cflow)
+    print('cfl:')
+    for u in range(stepcount):
+        print(u,'-',Dependency(cflow, u),'-',cflow[u])
+    
+    NonFor = [['   ' for Pranav in range(5*(stepcount))] for Saurabh in range(stepcount)]
+    forw   = [['   ' for Saurabh in range(5*(stepcount))] for Pranav in range(stepcount)]
+    clk = 1
+    for u in range(stepcount):
+        dep = Dependency(cflow,u)        
+        
+        if dep == 3 :
+            NonFor [u][clk] = 'Stl'
+            clk = clk +1 
+            
+            if u>0 and NonFor[u-1][clk] == 'Stl':
+                NonFor [u][clk] = 'Stl'
+                clk = clk +1 
+            
+        if u>0 and NonFor[u-1][clk] == 'Stl' and NonFor[u-1][clk+1] == 'Stl' and NonFor[u-1][clk+3] == 'Stl' and NonFor[u-1][clk+4] == 'Stl':
+            print('DETECTED-----------------')
+            NonFor[u][clk]   = 'Stl'
+            clk = clk+1
+            NonFor[u][clk]   = 'Stl'
+            clk = clk+1
+             
+            # if dep == 3:
+            #     NonFor [u][clk] = 'Stl'
+            #     clk = clk +1                
+
+            if u>0 and NonFor[u-1][clk] == 'IF ':
+                clk  = clk + 1
+            NonFor[u][clk] =   'IF '
+            NonFor [u][clk+1] = 'Stl'  
+            clk = clk + 1       
+            NonFor [u][clk+1] = 'Stl'  
+            clk = clk + 1     
+            NonFor[u][clk+1] = 'ID '
+            
+            if dep == 2:                
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '
+                clk = clk - 4
+            elif dep == 1 or dep == 4:                
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '
+                clk = clk -5
+            else:
+
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '          
+                clk = clk - 3
+        elif u>0 and NonFor[u-1][clk] == 'Stl' and NonFor[u-1][clk+1] == 'Stl' and NonFor[u-1][clk+3] == 'Stl':
+
+            NonFor[u][clk]   = 'Stl'
+            clk = clk+1
+            NonFor[u][clk]   = 'Stl'
+            clk = clk+1
+            # if dep == 3:
+            #     NonFor [u][clk] = 'Stl'
+            #     clk = clk +1
+                
+
+            if u>0 and NonFor[u-1][clk] == 'IF ':
+                clk  = clk + 1
+            NonFor[u][clk] =   'IF '
+            NonFor [u][clk+1] = 'Stl'            
+            NonFor[u][clk+2] = 'ID '
+            clk = clk + 1 # terror
+            if dep == 2:                
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '
+                clk = clk -3
+            elif dep == 1 or dep == 4:                
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '
+                clk = clk -4
+            else:
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '          
+                clk = clk - 2
+        elif u>0 and NonFor[u-1][clk] == 'Stl' and NonFor[u-1][clk+1] == 'Stl':
+            NonFor[u][clk]   = 'Stl'
+            clk = clk+1
+            NonFor[u][clk]   = 'Stl'
+            clk = clk+1
+            # if dep == 3:
+            #     NonFor [u][clk] = 'Stl'
+            #     clk = clk +1
+
+            if u>0 and NonFor[u-1][clk] == 'IF ':
+                clk  = clk + 1
+            NonFor[u][clk] =   'IF '
+
+            NonFor[u][clk+1] = 'ID '
+            if dep == 2:                
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '
+                clk = clk -2
+            elif dep == 1 or dep == 4:                
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '
+                clk = clk -3
+            else:
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '
+          
+                clk = clk - 1
+        elif u>0 and NonFor[u-1][clk+1] == 'Stl' and NonFor[u-1][clk+2] == 'Stl':
+            # if dep == 3:
+            #     NonFor [u][clk] = 'Stl'
+            #     clk = clk +1
+            if u>0 and NonFor[u-1][clk] == 'IF ':
+                clk  = clk + 1
+            NonFor[u][clk] =   'IF '
+            NonFor[u][clk+1]   = 'Stl'
+            clk = clk+1
+            NonFor[u][clk+1]   = 'Stl'
+            clk = clk+1            
+            NonFor[u][clk+1] = 'ID '
+            if dep == 2:
+                
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '
+                clk = clk -2
+            elif dep == 1 or dep == 4: 
+                print('special')               
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '
+                clk = clk -3
+            else:
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '
+          
+                clk = clk - 1
+        elif u>0 and NonFor[u-1][clk] == 'Stl':
+            NonFor[u][clk]   = 'Stl'
+            clk = clk+1
+            # if dep == 3:
+            #     NonFor [u][clk] = 'Stl'
+            #     clk = clk +1
+            if u>0 and NonFor[u-1][clk] == 'IF ':
+                clk  = clk + 1
+            NonFor[u][clk] =   'IF '
+            NonFor[u][clk+1] = 'ID '
+            if dep == 2:
+                
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '
+                clk = clk -1
+            elif dep == 1 or dep == 4:    
+                        
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '
+                clk = clk -2
+            else:
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '          
 
 
-# def print_area(txt):
+        elif u>0 and NonFor[u-1][clk+1] == 'Stl':
+            
+            # NonFor[u][clk] = 'IF '
+            # NonFor[u][clk+1]   = 'Stl'
+            # clk = clk+1
+            # NonFor[u][clk+1] = 'ID '
+            # NonFor[u][clk+2] = 'EXE'
+            # NonFor[u][clk+3] = 'MEM'
+            # NonFor[u][clk+4] = 'WB '
+            # # NonFor[u][clk+5] = 'WB '
+
+            # if dep == 3:
+            #     NonFor [u][clk] = 'Stl'
+            #     clk = clk +1
+            NonFor[u][clk] =  'IF '
+            NonFor[u][clk+1]   = 'Stl'
+            clk = clk+1
+            NonFor[u][clk+1] = 'ID '
+            if dep == 2:
+                
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '
+                clk = clk -1
+            elif dep == 1 or dep == 4:                
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '
+                clk = clk -2
+            else:
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '          
+
+        else:
+            if u>0 and NonFor[u-1][clk] == 'IF ':
+                clk = clk + 1
+            # NonFor[u][clk]   = 'IF '
+            # NonFor[u][clk+1] = 'ID '
+            # NonFor[u][clk+2] = 'EXE'
+            # NonFor[u][clk+3] = 'MEM'
+            # NonFor[u][clk+4] = 'WB '
+            # clk = clk+1
+
+            # if dep == 3:
+            #     NonFor [u][clk] = 'Stl'
+            #     clk = clk +1
+            if u>0 and NonFor[u-1][clk] == 'IF ':
+                clk  = clk + 1
+            NonFor[u][clk] =   'IF '
+            NonFor[u][clk+1] = 'ID '
+            if dep == 2:
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '
+                
+            elif dep == 1 or dep == 4:                
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'Stl'
+                clk = clk + 1
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB '
+                clk = clk -1
+            else:
+                NonFor[u][clk+2] = 'EXE'
+                NonFor[u][clk+3] = 'MEM'
+                NonFor[u][clk+4] = 'WB ' 
+                clk = clk + 1         
+
+        # NonFor[u][clk-1] = 'IF '
+        # NonFor[u][clk]   = 'ID '
+        # if dep >0 :
+        #     NonFor[u][clk+1] = 'Stl'
+        #     clk = clk+1
+        #     if dep ==1 :
+        #         NonFor[u][clk+1] = 'Stl'
+        #         clk = clk+1
+        
+        #     if u > 0:
+        #         past = listInd(NonFor[u-1],'WB ')
+        #         pastclk = clk
+        #         if clk <past and past != 100000:
+        #             clk = past
+        #             for r in range(pastclk+1,clk+1):
+        #                 NonFor[u][r] = 'Stl'
+
+        # NonFor[u][clk+1] = 'EXE'
+        # NonFor[u][clk+2] = 'MEM'
+        # NonFor[u][clk+3] = 'WB '
+        # clk = clk+1
+        
+    # def stall(cflow,forw,u,clk):
+    print("CLOCK CYCLES without Forwarding: ", listInd(NonFor[-1], 'WB '))   
+    clockpulsesNonFor =  listInd(NonFor[-1], 'WB ')
+    StallsNonFor = clockpulsesNonFor - stepcount - 4
+    
+
+
+    
+    clk = 1
+    for u in range(stepcount):
+        dep = Dependency(cflow,u)
+        if(dep<3):
+            
+            if u>0 and forw[u-1][clk] == 'Stl':
+                forw[u][clk]   = 'Stl'
+                clk = clk+1
+                forw[u][clk] =   'IF '
+                forw[u][clk+1] = 'ID '
+                forw[u][clk+2] = 'EXE'
+                forw[u][clk+3] = 'MEM'
+                forw[u][clk+4] = 'WB '
+                # forw[u][clk+5] = 'WB '
+            elif u>0 and forw[u-1][clk+1] == 'Stl':
+                
+                forw[u][clk] = 'IF '
+                forw[u][clk+1]   = 'Stl'
+                clk = clk+1
+                forw[u][clk+1] = 'ID '
+                forw[u][clk+2] = 'EXE'
+                forw[u][clk+3] = 'MEM'
+                forw[u][clk+4] = 'WB '
+                # forw[u][clk+5] = 'WB '
+            else:
+                if u>0 and forw[u-1][clk] == 'IF ':
+                    clk = clk + 1
+                forw[u][clk]   = 'IF '
+                forw[u][clk+1] = 'ID '
+                forw[u][clk+2] = 'EXE'
+                forw[u][clk+3] = 'MEM'
+                forw[u][clk+4] = 'WB '
+                clk = clk+1
+
+        elif dep == 3:
+            forw[u][clk]   = 'Stl'
+            clk = clk + 1
+            forw[u][clk]   = 'IF '
+            forw[u][clk+1] = 'ID '
+            forw[u][clk+2] = 'EXE'
+            forw[u][clk+3] = 'MEM'
+            forw[u][clk+4] = 'WB '
+            clk = clk+1
+
+        elif dep == 4:            
+            
+            forw[u][clk]   = 'IF '
+            forw[u][clk+1] = 'ID '
+            forw[u][clk+2] = 'Stl'
+            clk = clk+1
+            forw[u][clk+2] = 'EXE'
+            forw[u][clk+3] = 'MEM'
+            forw[u][clk+4] = 'WB '
+    print("CLOCK CYCLES with Forwarding: ", listInd(forw[-1], 'WB ') )   
+    clockpulsesFor =  listInd(forw[-1], 'WB ')
+    StallsFor = clockpulsesFor - stepcount - 4
+     
+    for pranav,saurabh in enumerate(NonFor):
+        pranav = str(pranav+1)
+        while len(pranav)<3:
+            pranav = pranav + ' '
+        saurabh[0]= pranav
+    for pranav,saurabh in enumerate(forw):
+        pranav = str(pranav+1)
+        while len(pranav)<3:
+            pranav = pranav + ' '
+        saurabh[0]= pranav
+    print('NON-FORWARDING-')
+    for y in NonFor:
+        u = 0
+        while(u<5*stepcount and y[u]!='WB '):
+            print(y[u], end ='|')
+            u = u+1
+        print('WB ')
+    # #
+    # for y in NonFor:
+    #     print(y)
+    # #
+
+    print('\n________________________\n\nFORWARDING-')
+    for y in forw:
+        u = 0
+        while(u<5*stepcount and y[u]!='WB '):
+            print(y[u], end ='|')
+            u = u+1
+        print('WB ')
+    print("CLOCK CYCLES without Forwarding: ", listInd(NonFor[-1], 'WB '))   
+    print("CLOCK CYCLES with Forwarding:    ", listInd(forw[-1], 'WB ') )
+    
+    print('\nNumber of Stalls without Forwarding: ', StallsNonFor)
+    print('Number of Stalls in Forwarding:      ',StallsFor )
+# def print_area(txt): 
 #     temp_file = tempfile.mktemp('.asm')
 #     open(temp_file, 'w').write(txt)
 #     os.startfile(temp_file)
@@ -284,10 +849,14 @@ pc_label.grid(row=0, column =0)
 pc_value =Label(root, text="0",padx = 60, pady=4,bg="#282823",fg="white",bd=3, font=("Arial,11"), relief=RIDGE)
 pc_value.grid(row=0, column =1)
 
+
 #Clear Button
 def clearReg():
-    global pc
-    pc = 0
+    # global pc
+    # pc = 0
+    setpc0()
+    print("pc=",pc)
+    pc_value.config(text= str(pc))
     for i in range (32):
         #make the values of elements in the backend register zero
         #register[i] = 0
@@ -450,6 +1019,10 @@ t.place(x=4, y=50)
 #Function for opening a file
 global currFile
 def openTxt():
+    setpc0()
+    clearBig()
+    clearReg()
+    print("pc=",pc)
     asmFile = filedialog.askopenfilename(title = "Open .asm File", filetypes=((".asm Files", "*.asm"),))
     global currFile
     currFile = asmFile
@@ -468,87 +1041,92 @@ def saveTxt():
 #Function for clearing the text area
 def clrText():
     #set linenumber = 0
+    clearBig()
     t.delete("1.0","end")
 
 #load Bubble Sort file
 def loadBubbleSort():
+    setpc0()
+    clearBig()
     t.delete("1.0","end")
     t.insert(INSERT,
-    '''##-------------------------------Bubble Sort ---------------------------------------#
+'''
+##-------------------------------Bubble Sort ---------------------------------------#
 # In the given bubble sort program we are sorting 5 integers 
 # It shows sorted integers from x18 to x22
 # and unsorted from x27 to x31
+
 .text
 # x6 = 100
-ADDI x6, x0, 100
-ADDI x7, x0, 4
-SW   x7, 0(x6)      # A[0] = 4
-ADDI x7, x0, 5
-SW   x7, 1(x6)      # A[1] = 5
-ADDI x7, x0, 1
-SW   x7, 2(x6)      # A[2] = 1
-ADDI x7, x0, 2
-SW   x7, 3(x6)      # A[3] = 2
-ADDI x7, x0, 3
-SW   x7, 4(x6)      # A[4] = 3
-# A = {5,4,3,2,1}
-printArray:     # Here we are actually loading the values in registers instead of printing
-ADDI x6, x0, 100
-LW   x27, 0(x6)      # x27 = A[0] 
-LW   x28, 1(x6)      # x28 = A[1] 
-LW   x29, 2(x6)      # x29 = A[2] 
-LW   x30, 3(x6)      # x30 = A[3] 
-LW   x31, 4(x6)      # x31 = A[4] 
+    ADDI x6, x0, 100
+    ADDI x7, x0, 4
+    SW   x7, 0(x6)      # A[0] = 4
+    ADDI x7, x0, 5
+    SW   x7, 1(x6)      # A[1] = 5
+    ADDI x7, x0, 1
+    SW   x7, 2(x6)      # A[2] = 1
+    ADDI x7, x0, 2
+    SW   x7, 3(x6)      # A[3] = 2
+    ADDI x7, x0, 3
+    SW   x7, 4(x6)      # A[4] = 3
+    # A = {5,4,3,2,1}
+    printArray:     # Here we are actually loading the values in registers instead of printing
+        ADDI x6, x0, 100
+        LW   x27, 0(x6)      # x27 = A[0] 
+        LW   x28, 1(x6)      # x28 = A[1] 
+        LW   x29, 2(x6)      # x29 = A[2] 
+        LW   x30, 3(x6)      # x30 = A[3] 
+        LW   x31, 4(x6)      # x31 = A[4] 
 
-ADDI x8, x0, 5      # size = 5
+    ADDI x8, x0, 5      # size = 5
 
-# i-> x9, j-> x19, n->x8
-bubbleSort:
-ADDI x9, x0, 0
+    # i-> x9, j-> x19, n->x8
+    bubbleSort:
+        ADDI x9, x0, 0
 
-oloop:
-BGE x9, x8, oexit
-ADDI x19, x8, 0
-SUBI x19, x19, 1
-iloop:
-BGE x9, x19, iexit
-# x23 -> *A, x24->*A[j], *x25->A[i]
-#            x21-> A[j],  x22->A[i]
-swap:
-ADDI x23, x6, 0
-ADD x24, x23, x9
-ADD x25, x23, x19
-LW  x21, 0(x24)
-LW  x22, 0(x25)
-BGE x22, x21, skip
+        oloop:
+            BGE x9, x8, oexit
+            ADDI x19, x8, 0
+            SUBI x19, x19, 1
+        iloop:
+            BGE x9, x19, iexit
+        # x23 -> *A, x24->*A[j], *x25->A[i]
+        #            x21-> A[j],  x22->A[i]
+        swap:
+            ADDI x23, x6, 0
+            ADD x24, x23, x9
+            ADD x25, x23, x19
+            LW  x21, 0(x24)
+            LW  x22, 0(x25)
+            BGE x22, x21, skip
 
-# x18-> temp
-ADDI x18, x22, 0
-ADDI x22, x21, 0
-ADDI x21, x18, 0
-SW x21, 0(x24)
-SW x22, 0(x25)
-skip:
-SUBI x19, x19, 1
-JAL iloop
-iexit:
-ADDI x9, x9, 1
-JAL oloop
-oexit:
+        # x18-> temp
+            ADDI x18, x22, 0
+            ADDI x22, x21, 0
+            ADDI x21, x18, 0
+            SW x21, 0(x24)
+            SW x22, 0(x25)
+        skip:
+            SUBI x19, x19, 1
+            JAL ra, iloop
+        iexit:
+            ADDI x9, x9, 1
+            JAL ra, oloop
 
-ADDI x23, x0, 0
-ADDI x24, x0, 0
-ADDI x25, x0, 0
+        oexit:
+            ADDI x23, x0, 0
+            ADDI x24, x0, 0
+            ADDI x25, x0, 0
 
-printSortedArray:
-# Here we are actually loading the values in registers instead of printing
-ADDI x6, x0, 100
-LW   x18, 0(x6)      # x18 = A[0] 
-LW   x19, 1(x6)      # x19 = A[1] 
-LW   x20, 2(x6)      # x20 = A[2] 
-LW   x21, 3(x6)      # x21 = A[3] 
-LW   x22, 4(x6)      # x22 = A[4] 
-# A = {1,2,3,4,5}'''
+    printSortedArray:
+    # Here we are actually loading the values in registers instead of printing
+        ADDI x6, x0, 100
+        LW   x18, 0(x6)      # x18 = A[0] 
+        LW   x19, 1(x6)      # x19 = A[1] 
+        LW   x20, 2(x6)      # x20 = A[2] 
+        LW   x21, 3(x6)      # x21 = A[3] 
+        LW   x22, 4(x6)      # x22 = A[4] 
+    # A = {1,2,3,4,5}'''
     )
 
 

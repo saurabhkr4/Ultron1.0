@@ -1,1 +1,1 @@
-print (i,"=i,rreg=",rreg)
+1
