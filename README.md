@@ -36,3 +36,5 @@ Along with BubbleSort.asm, also try running sumofTenNaturalNumbers.asm and LoadS
 
 <img width="941" alt="Untitled3" src="https://user-images.githubusercontent.com/97940574/156926307-51d6174a-1b60-4616-8483-4a9abf76f332.png">
 
+<b>Regarding Pipeline:</b>
+    Pipeline can be seen in the command line, We tried to do it in the GUI by using frames, toplevels, canvas etc. but we could not do it.
