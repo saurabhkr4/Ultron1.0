@@ -91,6 +91,7 @@ o	LoadStorecheck.asm
 o	SpecialStall.asm
 
 o	addreg.asm
+![image](https://user-images.githubusercontent.com/84005308/163727697-c69a7942-fea9-46c9-8b07-60418212544c.png)
 
 Possible Further Improvements:
 •	We couldn’t completely add the pipelining in Tkinter GUI, hence in a proper presentable manner, we have implemented it in Terminal only. This can be improved
