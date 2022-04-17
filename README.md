@@ -95,6 +95,7 @@ o	addreg.asm
 
 Possible Further Improvements:
 •	We couldn’t completely add the pipelining in Tkinter GUI, hence in a proper presentable manner, we have implemented it in Terminal only. This can be improved
+
 •	Single Line Implementation can be added
 
 The Backend part was done by Pranav.
