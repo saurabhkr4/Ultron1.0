@@ -5,3 +5,4 @@ LW x7, 10(x6)
 # As the Value of x5 is loaded in x7,
 # Hence LW and SW are working properly
 
+
