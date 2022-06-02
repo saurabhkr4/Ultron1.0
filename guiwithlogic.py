@@ -1138,7 +1138,7 @@ def print_area(listt):
         uip = ''
         while(u<5*stepcount and y[u]!='WB '):
             print(y[u], end ='|')
-            uip += y[u]+ '|'
+            uip += y[u].replace(' ','_')+ '|'
             u = u+1
         print('WB ')
         uip+= 'WB '
@@ -1157,7 +1157,7 @@ def print_area(listt):
         uip = ''
         while(u<5*stepcount and y[u]!='WB '):
             print(y[u], end = '|')
-            uip += y[u]+'|'
+            uip += y[u].replace(' ','_')+'|'
             u = u+1
         print('WB ')
         uip += 'WB '
