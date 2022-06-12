@@ -77,7 +77,7 @@ Highlights of the Project in this Phase:-
 
 •	It gives the count of Clock Cycles in Forwarding and Non-Forwarding mode.
 
-•	It Tells the gives the count of Stalls in Forwarding and Non-Forwarding mode.
+•	It Tells the count of Stalls in Forwarding and Non-Forwarding mode.
 
 •	It prints the memory elements after execution of the Program.
 
