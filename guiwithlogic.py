@@ -1,7 +1,9 @@
 
 from calendar import c
 import glob
+from msilib.schema import ListBox
 import opcode
+from pprint import pp
 from tkinter import *
 import tkinter.filedialog, tkinter.messagebox
 import os
@@ -236,13 +238,16 @@ cflow = dict()
 target = dict()
 targetinv = dict()
 big = []
+ppview = []
 # pc = 0
 def clearBig():
     global big,cflow,target,targetinv,jjj,pc,NonFor,forw, mll
     big = []
+    ppview = []
     cflow = dict() 
     target = dict()
     targetinv = dict()
+    myList.delete(0,END) 
     jjj = 0
     pc = 0
     NonFor = list()
@@ -256,6 +261,324 @@ def setpc0():
     global pc
     pc = 0
     pc_value.config(text= str(pc))
+
+# def print_area(txt): 
+#     temp_file = tempfile.mktemp('.asm')
+#     open(temp_file, 'w').write(txt)
+#     os.startfile(temp_file)
+
+root = Tk()
+root.configure(background = "floral white")
+# root.pack_propagate(0)
+# reg_name=[]
+# reg_value=[]
+
+#PC
+pc_label = Label(root, text="PC", padx = 48, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE)
+pc_label.grid(row=0, column =0)
+pc_value =Label(root, text="0",padx = 60, pady=4,bg="#282823",fg="white",bd=3, font=("Arial,11"), relief=RIDGE)
+pc_value.grid(row=0, column =1)
+
+
+#Clear Button
+def clearReg():
+    # global pc
+    # pc = 0
+    setpc0()
+    print("pc=",pc)
+    pc_value.config(text= str(pc))
+    for i in range (32):
+        #make the values of elements in the backend register zero
+        #register[i] = 0
+        reg[i] = 0
+        reg_value[i].config(text="0")
+        reg_value[i].config(padx=60)
+
+clearButton = Button(root, text = "CLEAR",padx=96,pady=1,bg="#F8E907",bd=1, fg="black",font=("calibri",14), command=clearReg, relief=RAISED )
+clearButton.grid(row=0, column =2, columnspan =2)
+
+#Binary and Hexadecimal Button
+
+radixCount = 0
+def buttonColor():
+    global radixCount
+    if radixCount==1:
+        binaryButton.config(bg="#8DB437", fg="black")
+        hexaButton.config(bg="skyblue", fg="black")
+        decimalButton.config(bg="skyblue", fg="black")
+    elif radixCount==2:
+        binaryButton.config(bg="skyblue", fg="black")
+        hexaButton.config(bg="#8DB437", fg="black")
+        decimalButton.config(bg="skyblue", fg="black")
+    elif radixCount==3:
+        binaryButton.config(bg="skyblue", fg="black")
+        hexaButton.config(bg="skyblue", fg="black")
+        decimalButton.config(bg="#8DB437", fg="black")
+
+#decimal to Binary
+def decimalToBinary(n):
+    return bin(n).replace("0b", "")
+
+#decimal to Hexadecimal
+def decimalToHexadecimal(n):
+    return hex(n).replace("0x", "")
+
+
+
+
+def binaryCommand():
+    #write code and call function to make the register values binary
+
+    for i in range(32):
+        reg_value[i].config(text = str(decimalToBinary(reg[i])))
+
+    global radixCount
+    radixCount = 1
+    buttonColor()
+
+def hexaCommand():
+    #write code and call function to make the register values hexadecimal
+    for i in range(32):
+        reg_value[i].config(text= str(decimalToHexadecimal(reg[i])))
+    
+    global radixCount
+    radixCount = 2
+    buttonColor()
+
+def decimalCommand():
+
+    for i in range(32):
+        reg_value[i].config(text= str(reg[i]))
+
+    global radixCount
+    radixCount = 3
+    buttonColor()
+
+
+binaryButton = Button(root, text="Binary",pady=64,bg="skyblue", fg="black", command = binaryCommand)
+binaryButton.grid(row=1, column = 4, rowspan=4)
+hexaButton = Button(root, text="Hexa  ",pady=64, bg="skyblue", fg="black", command = hexaCommand)
+hexaButton.grid(row=5, column = 4, rowspan=4)
+decimalButton = Button(root, text="Deci  ",padx=3,pady=64, bg="skyblue", fg="black", command = decimalCommand)
+decimalButton.grid(row=9, column = 4, rowspan=4)
+
+#creating the Labels for register names
+reg_name.append(Label(root, text="zero(x0)", padx = 32, pady=6, bd = 3, font=("Arial",11),bg ="gray9", fg="white", relief=RIDGE))
+
+reg_name.append(Label(root, text="ra(x1)", padx = 40, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
+reg_name.append(Label(root, text ="sp(x2)",padx = 38, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
+reg_name.append(Label(root, text ="gp(x3)",padx = 38, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
+reg_name.append(Label(root, text ="tp(x4)",padx = 40, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
+
+for i in range(3):
+    reg_name.append(Label(root, text ="t"+str(i)+"(x"+str(i+5)+")",padx = 42, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
+
+reg_name.append(Label(root, text ="s0(x8)",padx = 40, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
+reg_name.append(Label(root, text ="s1(x9)",padx = 40, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
+
+for i in range(8):
+    reg_name.append(Label(root, text ="a"+str(i)+"(x"+str(i+10)+")",padx = 36, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
+
+for i in range (10):
+    reg_name.append(Label(root, text="s"+str(i+2)+"(x"+str(i+18)+")", padx = 36, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
+
+reg_name[26].config(padx="32")
+reg_name[27].config(padx="32")
+
+for i in range (4):
+    reg_name.append(Label(root, text="t"+str(i+3)+"(x"+str(i+28)+")", padx = 38, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
+    
+#placing the reg_name 
+for i in range(32):
+    # reg_name[i].pack_propagate(0)
+    if i>15:
+        reg_name[i].grid(row=i-15, column = 2)
+    else:
+        reg_name[i].grid(row=i+1, column = 0)
+
+#Labels for values in the registers
+for i in range(32):
+    reg_value.append(Label(root, text="0",padx = 60, pady=4,bg="#282823",fg="white",bd=3, font=("Arial,4"), relief=RIDGE))
+
+for i in range(32):
+    # reg_value[i].pack_propagate(0)
+    if i>15:
+        reg_value[i].grid(row=i-15,column=3)
+    else:
+        reg_value[i].grid(row=i+1,column=1)
+
+
+# separator = ttk.Separator(root, orient='vertical')
+# separator.pack(fill='y')
+
+
+#Creating a seperator
+seperator = Label(root,bg = "floral white",padx = 8, pady = 100)
+seperator.grid(row = 1, column = 5, rowspan = 10)
+
+
+#creating the textbox
+global j
+j=1
+def highLight():
+    # t.delete('2.0','3.0')
+    # t.insert('2.0',"yellow\n")
+    # k = len(t.get('2.0',"2.end"))
+    # print(k)
+    global j
+    t.tag_add("x",str(j)+".0",str(j)+".0+1lines")
+    t.tag_config("x",background="white",foreground="black")
+    if j>=2:
+            t.tag_add("y",str(j-1)+".0",str(j-1)+".0+1lines")
+            t.tag_config("y",background="gray11",foreground="white")    
+    j=j+1
+
+ 
+
+#Creating new frame
+textFrame = Frame(root, bd =2,bg = "floral white", width = 800, height = 600)
+textFrame.grid(row = 0, column = 6, rowspan =16)
+
+
+#TextBox
+t = Text(textFrame, height=30, width=75)
+t.config(highlightcolor="red",bg= "gray11",fg="white", font=("Console", 12),insertbackground='white')
+t.place(x=4, y=50)
+
+
+# Pipeline Screen
+pipeFrame = Frame(root,bd = 3, relief = RIDGE,width = 50)
+pipeFrame.grid(row=16,column=6,rowspan=5)
+
+scroll_x = Scrollbar(pipeFrame,orient = HORIZONTAL)
+scroll_y = Scrollbar(pipeFrame,orient = VERTICAL)
+scroll_x.pack(side = BOTTOM, fill= X)
+scroll_y.pack(side = RIGHT, fill= Y)
+myList = Listbox(pipeFrame,width=70,height= 7,font = ('arial', 14,),bg = 'darkblue', fg = 'white', xscrollcommand=scroll_x.set,yscrollcommand= scroll_y.set)
+myList.pack()
+
+scroll_x.config(command=myList.xview)
+scroll_y.config(command=myList.yview)
+
+
+
+
+#Function for opening a file
+global currFile
+def openTxt():
+    setpc0()
+    clearBig()
+    clearReg()
+    print("pc=",pc)
+    asmFile = filedialog.askopenfilename(title = "Open .asm File", filetypes=((".asm Files", "*.asm"),))
+    global currFile
+    currFile = asmFile
+    asmFile = open(asmFile,'r')
+    stuff = asmFile.read()
+    #set linenumber = 0
+    t.delete("1.0","end")
+    t.insert(END,stuff)
+    asmFile.close()
+
+#Function for saving file
+def saveTxt():
+    asmFile = open(currFile,'w')
+    asmFile.write(t.get(1.0,END))
+
+#Function for clearing the text area
+def clrText():
+    #set linenumber = 0
+    clearBig()
+    t.delete("1.0","end")
+
+#load Bubble Sort file
+def loadBubbleSort():
+    setpc0()
+    clearBig()
+    t.delete("1.0","end")
+    t.insert(INSERT,
+'''
+##-------------------------------Bubble Sort ---------------------------------------#
+# In the given bubble sort program we are sorting 5 integers 
+# It shows sorted integers from x18 to x22
+# and unsorted from x27 to x31
+
+.text
+# x6 = 100
+    ADDI x6, x0, 100
+    ADDI x7, x0, 4
+    SW   x7, 0(x6)      # A[0] = 4
+    ADDI x7, x0, 5
+    SW   x7, 1(x6)      # A[1] = 5
+    ADDI x7, x0, 1
+    SW   x7, 2(x6)      # A[2] = 1
+    ADDI x7, x0, 2
+    SW   x7, 3(x6)      # A[3] = 2
+    ADDI x7, x0, 3
+    SW   x7, 4(x6)      # A[4] = 3
+    # A = {5,4,3,2,1}
+    printArray:     # Here we are actually loading the values in registers instead of printing
+        ADDI x6, x0, 100
+        LW   x27, 0(x6)      # x27 = A[0] 
+        LW   x28, 1(x6)      # x28 = A[1] 
+        LW   x29, 2(x6)      # x29 = A[2] 
+        LW   x30, 3(x6)      # x30 = A[3] 
+        LW   x31, 4(x6)      # x31 = A[4] 
+
+    ADDI x8, x0, 5      # size = 5
+
+    # i-> x9, j-> x19, n->x8
+    bubbleSort:
+        ADDI x9, x0, 0
+
+        oloop:
+            BGE x9, x8, oexit
+            ADDI x19, x8, 0
+            SUBI x19, x19, 1
+        iloop:
+            BGE x9, x19, iexit
+        # x23 -> *A, x24->*A[j], *x25->A[i]
+        #            x21-> A[j],  x22->A[i]
+        swap:
+            ADDI x23, x6, 0
+            ADD x24, x23, x9
+            ADD x25, x23, x19
+            LW  x21, 0(x24)
+            LW  x22, 0(x25)
+            BGE x22, x21, skip
+
+        # x18-> temp
+            ADDI x18, x22, 0
+            ADDI x22, x21, 0
+            ADDI x21, x18, 0
+            SW x21, 0(x24)
+            SW x22, 0(x25)
+        skip:
+            SUBI x19, x19, 1
+            JAL ra, iloop
+        iexit:
+            ADDI x9, x9, 1
+            JAL ra, oloop
+
+        oexit:
+            ADDI x23, x0, 0
+            ADDI x24, x0, 0
+            ADDI x25, x0, 0
+
+    printSortedArray:
+    # Here we are actually loading the values in registers instead of printing
+        ADDI x6, x0, 100
+        LW   x18, 0(x6)      # x18 = A[0] 
+        LW   x19, 1(x6)      # x19 = A[1] 
+        LW   x20, 2(x6)      # x20 = A[2] 
+        LW   x21, 3(x6)      # x21 = A[3] 
+        LW   x22, 4(x6)      # x22 = A[4] 
+    # A = {1,2,3,4,5}'''
+    )
+
+
+
+
 def print_area(listt):
     # pc = 0
     clearBig()
@@ -809,325 +1132,43 @@ def print_area(listt):
             pranav = pranav + ' '
         saurabh[0]= pranav
     print('NON-FORWARDING-')
+    ppview.append('NON-FORWARDING-\n')
     for y in NonFor:
         u = 0
+        uip = ''
         while(u<5*stepcount and y[u]!='WB '):
             print(y[u], end ='|')
+            uip += y[u].replace(' ','_')+ '|'
             u = u+1
         print('WB ')
+        uip+= 'WB '
+        ppview.append(uip)
     # #
     # for y in NonFor:
     #     print(y)
     # #
 
     print('\n________________________\n\nFORWARDING-')
+    ppview.append('________________________')
+    ppview.append('________________________')
+    ppview.append('FORWARDING-')
     for y in forw:
         u = 0
+        uip = ''
         while(u<5*stepcount and y[u]!='WB '):
-            print(y[u], end ='|')
+            print(y[u], end = '|')
+            uip += y[u].replace(' ','_')+'|'
             u = u+1
         print('WB ')
+        uip += 'WB '
+        ppview.append(uip)
     print("CLOCK CYCLES without Forwarding: ", listInd(NonFor[-1], 'WB '))   
     print("CLOCK CYCLES with Forwarding:    ", listInd(forw[-1], 'WB ') )
     
     print('\nNumber of Stalls without Forwarding: ', StallsNonFor)
     print('Number of Stalls in Forwarding:      ',StallsFor )
-# def print_area(txt): 
-#     temp_file = tempfile.mktemp('.asm')
-#     open(temp_file, 'w').write(txt)
-#     os.startfile(temp_file)
-
-root = Tk()
-root.configure(background = "floral white")
-# root.pack_propagate(0)
-# reg_name=[]
-# reg_value=[]
-
-#PC
-pc_label = Label(root, text="PC", padx = 48, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE)
-pc_label.grid(row=0, column =0)
-pc_value =Label(root, text="0",padx = 60, pady=4,bg="#282823",fg="white",bd=3, font=("Arial,11"), relief=RIDGE)
-pc_value.grid(row=0, column =1)
-
-
-#Clear Button
-def clearReg():
-    # global pc
-    # pc = 0
-    setpc0()
-    print("pc=",pc)
-    pc_value.config(text= str(pc))
-    for i in range (32):
-        #make the values of elements in the backend register zero
-        #register[i] = 0
-        reg[i] = 0
-        reg_value[i].config(text="0")
-        reg_value[i].config(padx=60)
-
-clearButton = Button(root, text = "CLEAR",padx=96,pady=1,bg="#F8E907",bd=1, fg="black",font=("calibri",14), command=clearReg, relief=RAISED )
-clearButton.grid(row=0, column =2, columnspan =2)
-
-#Binary and Hexadecimal Button
-
-radixCount = 0
-def buttonColor():
-    global radixCount
-    if radixCount==1:
-        binaryButton.config(bg="#8DB437", fg="black")
-        hexaButton.config(bg="skyblue", fg="black")
-        decimalButton.config(bg="skyblue", fg="black")
-    elif radixCount==2:
-        binaryButton.config(bg="skyblue", fg="black")
-        hexaButton.config(bg="#8DB437", fg="black")
-        decimalButton.config(bg="skyblue", fg="black")
-    elif radixCount==3:
-        binaryButton.config(bg="skyblue", fg="black")
-        hexaButton.config(bg="skyblue", fg="black")
-        decimalButton.config(bg="#8DB437", fg="black")
-
-#decimal to Binary
-def decimalToBinary(n):
-    return bin(n).replace("0b", "")
-
-#decimal to Hexadecimal
-def decimalToHexadecimal(n):
-    return hex(n).replace("0x", "")
-
-
-
-
-def binaryCommand():
-    #write code and call function to make the register values binary
-
-    for i in range(32):
-        reg_value[i].config(text = str(decimalToBinary(reg[i])))
-
-    global radixCount
-    radixCount = 1
-    buttonColor()
-
-def hexaCommand():
-    #write code and call function to make the register values hexadecimal
-    for i in range(32):
-        reg_value[i].config(text= str(decimalToHexadecimal(reg[i])))
-    
-    global radixCount
-    radixCount = 2
-    buttonColor()
-
-def decimalCommand():
-
-    for i in range(32):
-        reg_value[i].config(text= str(reg[i]))
-
-    global radixCount
-    radixCount = 3
-    buttonColor()
-
-
-binaryButton = Button(root, text="Binary",pady=64,bg="skyblue", fg="black", command = binaryCommand)
-binaryButton.grid(row=1, column = 4, rowspan=4)
-hexaButton = Button(root, text="Hexa  ",pady=64, bg="skyblue", fg="black", command = hexaCommand)
-hexaButton.grid(row=5, column = 4, rowspan=4)
-decimalButton = Button(root, text="Deci  ",padx=3,pady=64, bg="skyblue", fg="black", command = decimalCommand)
-decimalButton.grid(row=9, column = 4, rowspan=4)
-
-#creating the Labels for register names
-reg_name.append(Label(root, text="zero(x0)", padx = 32, pady=6, bd = 3, font=("Arial",11),bg ="gray9", fg="white", relief=RIDGE))
-
-reg_name.append(Label(root, text="ra(x1)", padx = 40, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
-reg_name.append(Label(root, text ="sp(x2)",padx = 38, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
-reg_name.append(Label(root, text ="gp(x3)",padx = 38, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
-reg_name.append(Label(root, text ="tp(x4)",padx = 40, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
-
-for i in range(3):
-    reg_name.append(Label(root, text ="t"+str(i)+"(x"+str(i+5)+")",padx = 42, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
-
-reg_name.append(Label(root, text ="s0(x8)",padx = 40, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
-reg_name.append(Label(root, text ="s1(x9)",padx = 40, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
-
-for i in range(8):
-    reg_name.append(Label(root, text ="a"+str(i)+"(x"+str(i+10)+")",padx = 36, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
-
-for i in range (10):
-    reg_name.append(Label(root, text="s"+str(i+2)+"(x"+str(i+18)+")", padx = 36, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
-
-reg_name[26].config(padx="32")
-reg_name[27].config(padx="32")
-
-for i in range (4):
-    reg_name.append(Label(root, text="t"+str(i+3)+"(x"+str(i+28)+")", padx = 38, pady=6, bd = 3, font=("Arial",11),bg ="gray4", fg="white", relief=RIDGE))
-    
-#placing the reg_name 
-for i in range(32):
-    # reg_name[i].pack_propagate(0)
-    if i>15:
-        reg_name[i].grid(row=i-15, column = 2)
-    else:
-        reg_name[i].grid(row=i+1, column = 0)
-
-#Labels for values in the registers
-for i in range(32):
-    reg_value.append(Label(root, text="0",padx = 60, pady=4,bg="#282823",fg="white",bd=3, font=("Arial,4"), relief=RIDGE))
-
-for i in range(32):
-    # reg_value[i].pack_propagate(0)
-    if i>15:
-        reg_value[i].grid(row=i-15,column=3)
-    else:
-        reg_value[i].grid(row=i+1,column=1)
-
-
-# separator = ttk.Separator(root, orient='vertical')
-# separator.pack(fill='y')
-
-
-#Creating a seperator
-seperator = Label(root,bg = "floral white",padx = 8, pady = 100)
-seperator.grid(row = 1, column = 5, rowspan = 10)
-
-
-#creating the textbox
-global j
-j=1
-def highLight():
-    # t.delete('2.0','3.0')
-    # t.insert('2.0',"yellow\n")
-    # k = len(t.get('2.0',"2.end"))
-    # print(k)
-    global j
-    t.tag_add("x",str(j)+".0",str(j)+".0+1lines")
-    t.tag_config("x",background="white",foreground="black")
-    if j>=2:
-            t.tag_add("y",str(j-1)+".0",str(j-1)+".0+1lines")
-            t.tag_config("y",background="gray11",foreground="white")    
-    j=j+1
-
- 
-
-#Creating new frame
-textFrame = Frame(root, bd =2,bg = "floral white", width = 800, height = 600)
-textFrame.grid(row = 0, column = 6, rowspan =16)
-
-
-#TextBox
-t = Text(textFrame, height=30, width=75)
-t.config(highlightcolor="red",bg= "gray11",fg="white", font=("Console", 12),insertbackground='white')
-t.place(x=4, y=50)
-
-
-#Function for opening a file
-global currFile
-def openTxt():
-    setpc0()
-    clearBig()
-    clearReg()
-    print("pc=",pc)
-    asmFile = filedialog.askopenfilename(title = "Open .asm File", filetypes=((".asm Files", "*.asm"),))
-    global currFile
-    currFile = asmFile
-    asmFile = open(asmFile,'r')
-    stuff = asmFile.read()
-    #set linenumber = 0
-    t.delete("1.0","end")
-    t.insert(END,stuff)
-    asmFile.close()
-
-#Function for saving file
-def saveTxt():
-    asmFile = open(currFile,'w')
-    asmFile.write(t.get(1.0,END))
-
-#Function for clearing the text area
-def clrText():
-    #set linenumber = 0
-    clearBig()
-    t.delete("1.0","end")
-
-#load Bubble Sort file
-def loadBubbleSort():
-    setpc0()
-    clearBig()
-    t.delete("1.0","end")
-    t.insert(INSERT,
-'''
-##-------------------------------Bubble Sort ---------------------------------------#
-# In the given bubble sort program we are sorting 5 integers 
-# It shows sorted integers from x18 to x22
-# and unsorted from x27 to x31
-
-.text
-# x6 = 100
-    ADDI x6, x0, 100
-    ADDI x7, x0, 4
-    SW   x7, 0(x6)      # A[0] = 4
-    ADDI x7, x0, 5
-    SW   x7, 1(x6)      # A[1] = 5
-    ADDI x7, x0, 1
-    SW   x7, 2(x6)      # A[2] = 1
-    ADDI x7, x0, 2
-    SW   x7, 3(x6)      # A[3] = 2
-    ADDI x7, x0, 3
-    SW   x7, 4(x6)      # A[4] = 3
-    # A = {5,4,3,2,1}
-    printArray:     # Here we are actually loading the values in registers instead of printing
-        ADDI x6, x0, 100
-        LW   x27, 0(x6)      # x27 = A[0] 
-        LW   x28, 1(x6)      # x28 = A[1] 
-        LW   x29, 2(x6)      # x29 = A[2] 
-        LW   x30, 3(x6)      # x30 = A[3] 
-        LW   x31, 4(x6)      # x31 = A[4] 
-
-    ADDI x8, x0, 5      # size = 5
-
-    # i-> x9, j-> x19, n->x8
-    bubbleSort:
-        ADDI x9, x0, 0
-
-        oloop:
-            BGE x9, x8, oexit
-            ADDI x19, x8, 0
-            SUBI x19, x19, 1
-        iloop:
-            BGE x9, x19, iexit
-        # x23 -> *A, x24->*A[j], *x25->A[i]
-        #            x21-> A[j],  x22->A[i]
-        swap:
-            ADDI x23, x6, 0
-            ADD x24, x23, x9
-            ADD x25, x23, x19
-            LW  x21, 0(x24)
-            LW  x22, 0(x25)
-            BGE x22, x21, skip
-
-        # x18-> temp
-            ADDI x18, x22, 0
-            ADDI x22, x21, 0
-            ADDI x21, x18, 0
-            SW x21, 0(x24)
-            SW x22, 0(x25)
-        skip:
-            SUBI x19, x19, 1
-            JAL ra, iloop
-        iexit:
-            ADDI x9, x9, 1
-            JAL ra, oloop
-
-        oexit:
-            ADDI x23, x0, 0
-            ADDI x24, x0, 0
-            ADDI x25, x0, 0
-
-    printSortedArray:
-    # Here we are actually loading the values in registers instead of printing
-        ADDI x6, x0, 100
-        LW   x18, 0(x6)      # x18 = A[0] 
-        LW   x19, 1(x6)      # x19 = A[1] 
-        LW   x20, 2(x6)      # x20 = A[2] 
-        LW   x21, 3(x6)      # x21 = A[3] 
-        LW   x22, 4(x6)      # x22 = A[4] 
-    # A = {1,2,3,4,5}'''
-    )
+    for r in ppview:
+        myList.insert(END,r)
 
 
 
@@ -1151,7 +1192,6 @@ clrButton.place(x=199, y=0)
 #Bubble Sort File Button
 runButton = Button(textFrame,bg="#B5DD50", text="Bubble Sort",padx=20,pady=4,command = loadBubbleSort)
 runButton.place(x=335, y=0)
-
 
 # create a toplevel menu  
 # menubar = Menu(textFrame)  
