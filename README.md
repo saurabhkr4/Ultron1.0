@@ -107,8 +107,7 @@ Highlights of the Project in Previous Phase:-
 
 •	Single Line Implementation can be added
 
-The Backend part was done by Pranav.
-The Frontend part and linking of Frontend with Backend was done by Saurabh.
+
 
 **Thanks!** <br/>
 **Team Ultron.**
