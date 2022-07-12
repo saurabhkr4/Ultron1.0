@@ -10,34 +10,36 @@ The <b>sorted array</b> is stored in the registers from <b>x18</b> to <b>x22</b>
 
 
 
-<b>How to use</b>
+## How to use
 
 **Step 1: From the main branch, Run guiwithlogic.py file**
 
 **Step 2: Click on the Bubble Sort Button**
-
+<br/> <br/>
 <img width="947" alt="Untitled1" src="https://user-images.githubusercontent.com/97940574/156937533-321c4855-6719-4d49-aa04-98a493a690a4.png">
 
 
 
 **Step 3: Click on the Run Button**
+<br/> <br/>
 <img width="939" alt="Untitled2" src="https://user-images.githubusercontent.com/97940574/156937547-b80524f7-d2a2-4091-9c2e-5512ce7c9c29.png">
+<br/> <br/>
 **Using OPEN button, one can load further more codes tooo**
 
 
 
 **Implemented Bubble Sort**
 <img width="936" alt="Untitled3" src="https://user-images.githubusercontent.com/97940574/156937552-8783c1b1-538a-4716-a15a-6b42911785f5.png">
+<br/> <br/>
 
-
-Along with BubbleSort.asm, also try running sumofTenNaturalNumbers.asm and LoadStorecheck.asm
-
+**Along with BubbleSort.asm, also try running sumofTenNaturalNumbers.asm and LoadStorecheck.asm**
+<br/> <br/>
 **Other Features:**
 
 <img width="941" alt="Untitled3" src="https://user-images.githubusercontent.com/97940574/156926307-51d6174a-1b60-4616-8483-4a9abf76f332.png">
 
 
-Phase I:
+## Phase I:
 Highlights of the Project in Previous Phase:- 
 
 •	13 Instructions executed – 
@@ -67,10 +69,12 @@ Highlights of the Project in Previous Phase:-
 
 
 
-Phase II:
+## Phase II:
 ![image](https://user-images.githubusercontent.com/84005308/163727511-0a50e4fa-094b-4fe9-af9a-7d7987f896b4.png)
 
-Highlights of the Project in this Phase:- 
+### Highlights of the Project in this Phase:- 
+
+
 •	It diagrammatically shows the pipeline flow of the code in the terminal.
 
 •	User can see the output of pipeline diagram in both – Forwarding and Non-Forwarding mode (in terminal).
@@ -82,18 +86,23 @@ Highlights of the Project in this Phase:-
 •	It prints the memory elements after execution of the Program.
 
 •	5 Programs in . asm format are attached in repo-
-o	 BubbleSort.asm
 
-o	sumofTenNaturalNumbers.asm
 
-o	LoadStorecheck.asm
+ &nbsp; &nbsp; o	 BubbleSort.asm
 
-o	SpecialStall.asm
+ &nbsp; &nbsp;  o	sumofTenNaturalNumbers.asm
 
-o	addreg.asm
+ &nbsp; &nbsp; o	LoadStorecheck.asm
+
+ &nbsp; &nbsp; o	SpecialStall.asm
+
+ &nbsp; &nbsp; o	addreg.asm
+
 ![image](https://user-images.githubusercontent.com/84005308/163727697-c69a7942-fea9-46c9-8b07-60418212544c.png)
 
-Possible Further Improvements:
+### Possible Further Improvements:
+
+
 •	We couldn’t completely add the pipelining in Tkinter GUI, hence in a proper presentable manner, we have implemented it in Terminal only. This can be improved
 
 •	Single Line Implementation can be added
@@ -101,8 +110,8 @@ Possible Further Improvements:
 The Backend part was done by Pranav.
 The Frontend part and linking of Frontend with Backend was done by Saurabh.
 
-Thanks!
-Team Ultron.
+**Thanks!** <br/>
+**Team Ultron.**
 
 
 
